@@ -25,7 +25,7 @@
         pool-name="party" enabled="true"
         use-java-context="true">
         <connection-url>jdbc:oracle:thin:@localhost:1521:XE</connection-url>
-        <driver>ojdbc6.jar</driver>
+        <driver>oracle</driver>
         <transaction-isolation>TRANSACTION_READ_COMMITTED</transaction-isolation>
         <security>
             <user-name>party</user-name>
