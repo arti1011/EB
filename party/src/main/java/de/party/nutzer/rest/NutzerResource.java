@@ -48,7 +48,7 @@ public class NutzerResource {
 						  @QueryParam("password") String password) {
 		Nutzer nutzer = ns.authService(email, password);
 		if (nutzer == null) {
-			return Response.status(HTTP_NOT_FOUND).build();
+			return Response.status(Response.Status.NOT_FOUND).build();
 		}
 		return Response.ok(nutzer).build();
 	}
