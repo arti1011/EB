@@ -17,11 +17,13 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.Version;
 import javax.validation.constraints.NotNull;
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
 
 @Entity
 @Table
+@XmlRootElement
 public class Nutzer implements Serializable {
 	private static final long serialVersionUID = 4618817696314640065L;
 	

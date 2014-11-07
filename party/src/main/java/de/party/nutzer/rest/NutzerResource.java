@@ -22,7 +22,7 @@ import static javax.ws.rs.core.MediaType.APPLICATION_XML;
 import static javax.ws.rs.core.MediaType.TEXT_PLAIN;
 import de.party.nutzer.domain.Nutzer;
 import de.party.nutzer.service.NutzerService;
-import de.party.util.UriHelper;
+
 
 @Path("/user")
 @Produces(APPLICATION_JSON)

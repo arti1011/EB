@@ -1,6 +1,6 @@
 package de.party.nutzer.service;
 
-import java.sql.Timestamp;
+
 import java.util.Date;
 
 import javax.persistence.EntityManager;
