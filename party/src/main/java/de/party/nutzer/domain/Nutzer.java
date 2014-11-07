@@ -1,4 +1,4 @@
-package Nutzerverwaltung.Domain;
+package de.party.nutzer.domain;
 
 
 
@@ -10,15 +10,11 @@ import java.util.Date;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-
+import javax.persistence.PreUpdate;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.Version;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
-import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlTransient;
 
 
@@ -28,40 +24,51 @@ public class Nutzer implements Serializable {
 	private static final long serialVersionUID = 4618817696314640065L;
 	
 	private static final int PLZ_LENGTH_MAX = 5;
-	private static final int ORT_LENGTH_MIN = 2;
+//	private static final int ORT_LENGTH_MIN = 2;
 	private static final int ORT_LENGTH_MAX = 32;
-	private static final int STRASSE_LENGTH_MIN = 2;
+//	private static final int STRASSE_LENGTH_MIN = 2;
 	private static final int STRASSE_LENGTH_MAX = 32;
 	private static final int HAUSNR_LENGTH_MAX = 4;
 
+	
 	@Id
-	@GeneratedValue
-	@Column(nullable = true, updatable = false)
-	private Long id = null;
-
+	@Column(nullable = false)
+	private String email;
+	
+	@Column(nullable = false)
+	private String nachname;
+	
+	@Column(nullable = false)
+	private String vorname;	
+	
+	
 	@Version
 	@Basic(optional = false)
 	private int version = 1;
 
 	@Column(length = PLZ_LENGTH_MAX, nullable = false)
-	@NotNull(message = "{adresse.plz.notNull}")
-	@Pattern(regexp = "\\d{5}", message = "{adresse.plz}")
+//	@NotNull(message = "{adresse.plz.notNull}")
+//	@Pattern(regexp = "\\d{5}", message = "{adresse.plz}")
 	private String plz;
 
 	@Column(length = ORT_LENGTH_MAX, nullable = false)
-	@NotNull(message = "{adresse.ort.notNull}")
-	@Size(min = ORT_LENGTH_MIN, max = ORT_LENGTH_MAX, message = "{adresse.ort.length}")
+//	@NotNull(message = "{adresse.ort.notNull}")
+//	@Size(min = ORT_LENGTH_MIN, max = ORT_LENGTH_MAX, message = "{adresse.ort.length}")
 	private String ort;
 
 	@Column(length = STRASSE_LENGTH_MAX, nullable = false)
-	@NotNull(message = "{adresse.strasse.notNull}")
-	@Size(min = STRASSE_LENGTH_MIN, max = STRASSE_LENGTH_MAX, message = "{adresse.strasse.length}")
+//	@NotNull(message = "{adresse.strasse.notNull}")
+//	@Size(min = STRASSE_LENGTH_MIN, max = STRASSE_LENGTH_MAX, message = "{adresse.strasse.length}")
 	private String strasse;
 
 	@Column(length = HAUSNR_LENGTH_MAX)
-	@Size(max = HAUSNR_LENGTH_MAX, message = "{adresse.hausnr.length}")
+//	@Size(max = HAUSNR_LENGTH_MAX, message = "{adresse.hausnr.length}")
 	private String hausnr;
 
+	//TODO eventuell @JsonIgnore damit das Password nicht im Response übermittelt wird
+	@Column(nullable = false)
+	private String password;
+	
 	@Basic(optional = false)
 	@Temporal(TIMESTAMP)
 	@XmlTransient
@@ -83,13 +90,34 @@ public class Nutzer implements Serializable {
 		this.strasse = strasse;
 		this.hausnr = hausnr;
 	}
-
-	public Long getId() {
-		return id;
+	
+	@PreUpdate
+	protected void preUpdate() {
+		aktualisiert = new Date();
 	}
 
-	public void setId(Long id) {
-		this.id = id;
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
+	}
+	
+	public String getNachname() {
+		return nachname;
+	}
+
+	public void setNachname(String nachname) {
+		this.nachname = nachname;
+	}
+
+	public String getVorname() {
+		return vorname;
+	}
+
+	public void setVorname(String vorname) {
+		this.vorname = vorname;
 	}
 
 	public int getVersion() {
@@ -132,6 +160,13 @@ public class Nutzer implements Serializable {
 		this.hausnr = hausnr;
 	}
 
+	public String getPassword() {
+		return password;
+	}
+	public void setPassword(String password) {
+		this.password = password;
+	}
+	
 	public Date getErzeugt() {
 		return erzeugt;
 	}
@@ -152,15 +187,10 @@ public class Nutzer implements Serializable {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
+		result = prime * result + ((email == null) ? 0 : email.hashCode());
 		result = prime * result
-				+ ((aktualisiert == null) ? 0 : aktualisiert.hashCode());
-		result = prime * result + ((erzeugt == null) ? 0 : erzeugt.hashCode());
-		result = prime * result + ((hausnr == null) ? 0 : hausnr.hashCode());
-		result = prime * result + ((id == null) ? 0 : id.hashCode());
-		result = prime * result + ((ort == null) ? 0 : ort.hashCode());
-		result = prime * result + ((plz == null) ? 0 : plz.hashCode());
-		result = prime * result + ((strasse == null) ? 0 : strasse.hashCode());
-		result = prime * result + version;
+				+ ((nachname == null) ? 0 : nachname.hashCode());
+		result = prime * result + ((vorname == null) ? 0 : vorname.hashCode());
 		return result;
 	}
 
@@ -173,53 +203,34 @@ public class Nutzer implements Serializable {
 		if (getClass() != obj.getClass())
 			return false;
 		Nutzer other = (Nutzer) obj;
-		if (aktualisiert == null) {
-			if (other.aktualisiert != null)
+		if (email == null) {
+			if (other.email != null)
 				return false;
-		} else if (!aktualisiert.equals(other.aktualisiert))
+		} else if (!email.equals(other.email))
 			return false;
-		if (erzeugt == null) {
-			if (other.erzeugt != null)
+		if (nachname == null) {
+			if (other.nachname != null)
 				return false;
-		} else if (!erzeugt.equals(other.erzeugt))
+		} else if (!nachname.equals(other.nachname))
 			return false;
-		if (hausnr == null) {
-			if (other.hausnr != null)
+		if (vorname == null) {
+			if (other.vorname != null)
 				return false;
-		} else if (!hausnr.equals(other.hausnr))
-			return false;
-		if (id == null) {
-			if (other.id != null)
-				return false;
-		} else if (!id.equals(other.id))
-			return false;
-		if (ort == null) {
-			if (other.ort != null)
-				return false;
-		} else if (!ort.equals(other.ort))
-			return false;
-		if (plz == null) {
-			if (other.plz != null)
-				return false;
-		} else if (!plz.equals(other.plz))
-			return false;
-		if (strasse == null) {
-			if (other.strasse != null)
-				return false;
-		} else if (!strasse.equals(other.strasse))
-			return false;
-		if (version != other.version)
+		} else if (!vorname.equals(other.vorname))
 			return false;
 		return true;
 	}
 
 	@Override
 	public String toString() {
-		return "Nutzer [id=" + id + ", version=" + version + ", plz=" + plz
-				+ ", ort=" + ort + ", strasse=" + strasse + ", hausnr="
-				+ hausnr + ", erzeugt=" + erzeugt + ", aktualisiert="
-				+ aktualisiert + "]";
+		return "Nutzer [email=" + email + ", nachname=" + nachname
+				+ ", vorname=" + vorname + ", plz=" + plz + ", ort=" + ort
+				+ ", strasse=" + strasse + ", hausnr=" + hausnr + "]";
 	}
+
+	
+
+
 
 	
 
