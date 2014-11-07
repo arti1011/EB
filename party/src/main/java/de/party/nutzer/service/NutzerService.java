@@ -1,5 +1,8 @@
 package de.party.nutzer.service;
 
+import java.sql.Timestamp;
+import java.util.Date;
+
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
@@ -12,19 +15,23 @@ public class NutzerService {
 	@PersistenceContext
 	private EntityManager em;
 	
-	public Nutzer registrateUser(Nutzer user) {
+	public Nutzer registrateUser(Nutzer nutzer) {
 
+		if (nutzer == null) {
+			return null;
+		}
+		Nutzer temp = findNutzerByEmail(nutzer.getEmail());
 		
-		//TODO email check einbauen
-//		//Prüfung ob User schon existiert
-//		final User temp = findUserByEmail(user.getEmail());
-//		if (temp != null) {
-//			throw new Exception();
-//		}
+		if (temp != null) {
+			return null;
+		}
+		nutzer.setErzeugt(new Date());
 		
-		em.persist(user);
+		//TODO mail exception werfen
 		
-		return user;
+		em.persist(nutzer);
+		
+		return nutzer;
 	}
 
 	public Nutzer findNutzerByEmail(String email) {

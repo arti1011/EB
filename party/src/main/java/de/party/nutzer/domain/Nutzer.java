@@ -11,10 +11,12 @@ import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.Version;
+import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlTransient;
 
 
@@ -66,6 +68,7 @@ public class Nutzer implements Serializable {
 	private String hausnr;
 
 	//TODO eventuell @JsonIgnore damit das Password nicht im Response übermittelt wird
+	@NotNull(message = "PASSWORD DARF NET NULL SEI DU DAPP")
 	@Column(nullable = false)
 	private String password;
 	
@@ -89,6 +92,10 @@ public class Nutzer implements Serializable {
 		this.ort = ort;
 		this.strasse = strasse;
 		this.hausnr = hausnr;
+	}
+	@PrePersist
+	protected void prePerstist() {
+		aktualisiert = new Date();
 	}
 	
 	@PreUpdate

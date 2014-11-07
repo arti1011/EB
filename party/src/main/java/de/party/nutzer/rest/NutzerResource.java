@@ -4,6 +4,8 @@ import java.util.NoSuchElementException;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
+import javax.transaction.Transactional;
+import javax.validation.Valid;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -16,9 +18,11 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
+import static javax.ws.rs.core.MediaType.APPLICATION_XML;
 import static javax.ws.rs.core.MediaType.TEXT_PLAIN;
 import de.party.nutzer.domain.Nutzer;
 import de.party.nutzer.service.NutzerService;
+import de.party.util.UriHelper;
 
 @Path("/user")
 @Produces(APPLICATION_JSON)
@@ -26,8 +30,7 @@ import de.party.nutzer.service.NutzerService;
 @RequestScoped
 public class NutzerResource {
 
-	private static int HTTP_NOT_FOUND = 404;
-	
+		
 	@Context
 	private UriInfo uriInfo;
 	
@@ -48,7 +51,7 @@ public class NutzerResource {
 						  @QueryParam("password") String password) {
 		Nutzer nutzer = ns.authService(email, password);
 		if (nutzer == null) {
-			return Response.status(HTTP_NOT_FOUND).build();
+			return Response.status(Response.Status.NOT_FOUND).build();
 		}
 		return Response.ok(nutzer).build();
 	}
@@ -74,20 +77,23 @@ public class NutzerResource {
 			throw new NoSuchElementException();
 		}
 		
+		
 		return Response.ok(nutzer).build();
 	}
 	
 	
-	//TODO @Transactional einbinden
+	
 	@POST
 	@Consumes(APPLICATION_JSON)
-	@Produces
-	public Response registrateUser(Nutzer user) {
+	@Produces({APPLICATION_JSON, APPLICATION_XML})
+	@Transactional
+	public Response registrateUser(@Valid Nutzer nutzer) {
 		
-		user = ns.registrateUser(user);
 		
+		nutzer = ns.registrateUser(nutzer);
+		//TODO EmailExists Exception anhand Jürgen Stack einbinden
 		// Erstmal nur ein HTTP-OK zurückgeben
-		return Response.ok().build();
+		return Response.ok(nutzer).build();
 				
 				
 		
