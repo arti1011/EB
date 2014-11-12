@@ -1,4 +1,4 @@
-package de.party.util;
+package de.party.util.rest;
 
 import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.core.Application;

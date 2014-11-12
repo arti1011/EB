@@ -1,4 +1,4 @@
-package de.party.util;
+package de.party.util.rest;
 
 import static javax.ws.rs.core.Response.Status.BAD_REQUEST;
 import static org.jboss.resteasy.api.validation.ConstraintType.Type.PARAMETER;

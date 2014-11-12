@@ -17,6 +17,8 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.Version;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
@@ -28,21 +30,28 @@ public class Nutzer implements Serializable {
 	private static final long serialVersionUID = 4618817696314640065L;
 	
 	private static final int PLZ_LENGTH_MAX = 5;
-//	private static final int ORT_LENGTH_MIN = 2;
+	private static final int ORT_LENGTH_MIN = 2;
 	private static final int ORT_LENGTH_MAX = 32;
-//	private static final int STRASSE_LENGTH_MIN = 2;
+	private static final int STRASSE_LENGTH_MIN = 2;
 	private static final int STRASSE_LENGTH_MAX = 32;
 	private static final int HAUSNR_LENGTH_MAX = 4;
 
 	
 	@Id
 	@Column(nullable = false)
+	@NotNull(message = "{nutzerverwaltung.email.notNull")
+	@Pattern(regexp="[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\."
+		        +"[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@"
+		        +"(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?",
+		             message="{nutzerverwaltung.email.invalid}")
 	private String email;
 	
 	@Column(nullable = false)
+	@NotNull(message = "{nutzerverwaltung.nachname.notNull}")
 	private String nachname;
 	
 	@Column(nullable = false)
+	@NotNull(message = "{nutzerverwaltung.vorname.notNull}")
 	private String vorname;	
 	
 	
@@ -51,26 +60,26 @@ public class Nutzer implements Serializable {
 	private int version = 1;
 
 	@Column(length = PLZ_LENGTH_MAX, nullable = false)
-//	@NotNull(message = "{adresse.plz.notNull}")
-//	@Pattern(regexp = "\\d{5}", message = "{adresse.plz}")
+	@NotNull(message = "{nutzerverwaltung.plz.notNull}")
+	@Size(max = PLZ_LENGTH_MAX, message="{nutzerverwaltung.plz.length}")
 	private String plz;
 
 	@Column(length = ORT_LENGTH_MAX, nullable = false)
-//	@NotNull(message = "{adresse.ort.notNull}")
-//	@Size(min = ORT_LENGTH_MIN, max = ORT_LENGTH_MAX, message = "{adresse.ort.length}")
+	@NotNull(message = "{nutzerverwaltung.ort.notNull}")
+	@Size(min = ORT_LENGTH_MIN, max = ORT_LENGTH_MAX, message = "{nutzerverwaltung.ort.length}")
 	private String ort;
 
 	@Column(length = STRASSE_LENGTH_MAX, nullable = false)
-//	@NotNull(message = "{adresse.strasse.notNull}")
-//	@Size(min = STRASSE_LENGTH_MIN, max = STRASSE_LENGTH_MAX, message = "{adresse.strasse.length}")
+	@NotNull(message = "{nutzerverwaltung.strasse.notNull}")
+	@Size(min = STRASSE_LENGTH_MIN, max = STRASSE_LENGTH_MAX, message = "{nutzerverwaltung.strasse.length}")
 	private String strasse;
 
 	@Column(length = HAUSNR_LENGTH_MAX)
-//	@Size(max = HAUSNR_LENGTH_MAX, message = "{adresse.hausnr.length}")
+	@Size(max = HAUSNR_LENGTH_MAX, message = "{nutzerverwaltung.hausnr.length}")
 	private String hausnr;
 
 	//TODO eventuell @JsonIgnore damit das Password nicht im Response übermittelt wird
-	@NotNull(message = "PASSWORD DARF NET NULL SEI DU DAPP")
+	@NotNull(message = "{nutzerverwaltung.password.notNull}")
 	@Column(nullable = false)
 	private String password;
 	

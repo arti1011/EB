@@ -23,7 +23,7 @@ public class NutzerService {
 		Nutzer temp = findNutzerByEmail(nutzer.getEmail());
 		
 		if (temp != null) {
-			return null;
+			throw new EmailExistsException(nutzer.getEmail());
 		}
 		nutzer.setErzeugt(new Date());
 		

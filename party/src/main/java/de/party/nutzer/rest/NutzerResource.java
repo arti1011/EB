@@ -44,7 +44,7 @@ public class NutzerResource {
 		return "1.0";
 	}
 	
-	
+	@Deprecated
 	@GET
 	@Path("/login")
 	public Response login(@QueryParam("email") String email, 
@@ -82,7 +82,7 @@ public class NutzerResource {
 	}
 	
 	
-	
+	@Deprecated
 	@POST
 	@Consumes(APPLICATION_JSON)
 	@Produces({APPLICATION_JSON, APPLICATION_XML})
