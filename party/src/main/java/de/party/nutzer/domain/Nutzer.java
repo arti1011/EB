@@ -5,12 +5,19 @@ package de.party.nutzer.domain;
 import static javax.persistence.TemporalType.TIMESTAMP;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
 import javax.persistence.Table;
@@ -22,12 +29,40 @@ import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
+import static de.party.util.Constants.KEINE_ID;
+
+
+
 
 @Entity
 @Table
+@NamedQueries( {
+	@NamedQuery(name = Nutzer.FIND_NUTZER_BY_EMAIL, 
+					query = "SELECT n"
+								+ " FROM Nutzer n"
+									+ " WHERE n.email = :" + Nutzer.EMAIL_QUERY_PARAM) ,
+	@NamedQuery(name = Nutzer.FIND_NUTZER_BY_NACHNAME,
+					query = "SELECT n"
+							+ " FROM Nutzer n"
+							+ " WHERE UPPER(n.nachname) = UPPER(:" + Nutzer.NACHNAME_QUERY_PARAM + ")") ,
+	@NamedQuery(name = Nutzer.FIND_NUTZER_BY_NACHNAME_PREFIX,
+						query = "SELECT n"
+									+ " FROM Nutzer n"
+									+ " WHERE UPPER (n.nachname) LIKE :" + Nutzer.NACHNAME_QUERY_PARAM)
+})
 @XmlRootElement
 public class Nutzer implements Serializable {
 	private static final long serialVersionUID = 4618817696314640065L;
+	
+	// Konstanten für Queries
+	public final static String EMAIL_QUERY_PARAM  = "email";
+	public final static String FIND_NUTZER_BY_EMAIL = "findNutzerByEmail";
+	
+	public final static String FIND_NUTZER_BY_NACHNAME = "findNutzerByNachname";
+	public final static String FIND_NUTZER_BY_NACHNAME_PREFIX = "findNutzerByNachnamePrefix";
+	public final static String NACHNAME_QUERY_PARAM = "nachname";
+	
+	
 	
 	private static final int PLZ_LENGTH_MAX = 5;
 	private static final int ORT_LENGTH_MIN = 2;
@@ -38,6 +73,15 @@ public class Nutzer implements Serializable {
 
 	
 	@Id
+	@GeneratedValue
+	@Column(nullable = false, updatable = false)
+	private Long id = KEINE_ID;
+
+
+	// Freunde Relation
+	@OneToMany(mappedBy = "owner", cascade=CascadeType.ALL, orphanRemoval = true)	
+	private List<Freundschaft> freundschaft = new ArrayList<Freundschaft>();
+	
 	@Column(nullable = false)
 	@NotNull(message = "{nutzerverwaltung.email.notNull")
 	@Pattern(regexp="[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\."
