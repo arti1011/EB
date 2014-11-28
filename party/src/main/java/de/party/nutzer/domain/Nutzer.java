@@ -49,6 +49,7 @@ import static de.party.util.Constants.KEINE_ID;
 						query = "SELECT n"
 									+ " FROM Nutzer n"
 									+ " WHERE UPPER (n.nachname) LIKE :" + Nutzer.NACHNAME_QUERY_PARAM)
+
 })
 @XmlRootElement
 public class Nutzer implements Serializable {
@@ -62,8 +63,7 @@ public class Nutzer implements Serializable {
 	public final static String FIND_NUTZER_BY_NACHNAME_PREFIX = "findNutzerByNachnamePrefix";
 	public final static String NACHNAME_QUERY_PARAM = "nachname";
 	
-	
-	
+		
 	private static final int PLZ_LENGTH_MAX = 5;
 	private static final int ORT_LENGTH_MIN = 2;
 	private static final int ORT_LENGTH_MAX = 32;
@@ -122,7 +122,7 @@ public class Nutzer implements Serializable {
 	@Size(max = HAUSNR_LENGTH_MAX, message = "{nutzerverwaltung.hausnr.length}")
 	private String hausnr;
 
-	//TODO eventuell @JsonIgnore damit das Password nicht im Response übermittelt wird
+	//TODO JSON IGNORE
 	@NotNull(message = "{nutzerverwaltung.password.notNull}")
 	@Column(nullable = false)
 	private String password;
@@ -158,6 +158,10 @@ public class Nutzer implements Serializable {
 		aktualisiert = new Date();
 	}
 
+	public Long getId() {
+		return id;
+	}
+	
 	public String getEmail() {
 		return email;
 	}

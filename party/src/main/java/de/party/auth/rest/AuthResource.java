@@ -15,6 +15,10 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 
+
+
+
+import de.party.auth.service.AuthService;
 import de.party.nutzer.domain.Nutzer;
 import de.party.nutzer.service.NutzerService;
 
@@ -22,16 +26,21 @@ import de.party.nutzer.service.NutzerService;
 @Produces(APPLICATION_JSON)
 @Consumes
 @RequestScoped
-public class AuthenticateResource {
+public class AuthResource {
 	
 	@Inject
 	private NutzerService ns;
+	
+	@Inject
+	private AuthService as;
 
+	
+	//TODO NotFoundException einbauen
 	@GET
 	@Path("/login")
 	public Response login(@QueryParam("email") String email,
 			@QueryParam("password") String password) {
-		Nutzer nutzer = ns.authService(email, password);
+		Nutzer nutzer = as.login(email, password);
 		if (nutzer == null) {
 			return Response.status(Response.Status.NOT_FOUND).build();
 		}
@@ -50,4 +59,5 @@ public class AuthenticateResource {
 		
 		return Response.ok(nutzer).build();
 	}
+	
 }

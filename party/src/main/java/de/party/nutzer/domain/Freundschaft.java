@@ -1,5 +1,7 @@
 package de.party.nutzer.domain;
 
+import java.io.Serializable;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -12,8 +14,14 @@ import javax.xml.bind.annotation.XmlRootElement;
 @Entity
 @Table
 @XmlRootElement
-public class Freundschaft {
+public class Freundschaft implements Serializable {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -4292729479002743257L;
+
+
 	@Id
 	@GeneratedValue
 	@Column(nullable = false, updatable = false)
@@ -56,7 +64,14 @@ public class Freundschaft {
 		return id;
 	}
 
-
+	public Freundschaft(Nutzer requester, Nutzer friend) {
+		this.owner = requester;
+		this.person = friend;
+	}
+	
+	public Freundschaft() {
+		super();
+	}
 	
 	
 	

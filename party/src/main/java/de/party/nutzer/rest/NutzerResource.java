@@ -24,6 +24,8 @@ import javax.ws.rs.core.UriInfo;
 
 
 
+
+
 import org.jboss.logging.Logger;
 
 import com.google.common.base.Strings;
@@ -55,6 +57,7 @@ public class NutzerResource {
 	@Inject 
 	private NutzerService ns;
 	
+		
 	@GET
 	@Produces(TEXT_PLAIN)
 	@Path("version")
@@ -64,17 +67,7 @@ public class NutzerResource {
 		return "1.0";
 	}
 	
-	@Deprecated
-	@GET
-	@Path("/login")
-	public Response login(@QueryParam("email") String email, 
-						  @QueryParam("password") String password) {
-		Nutzer nutzer = ns.authService(email, password);
-		if (nutzer == null) {
-			return Response.status(Response.Status.NOT_FOUND).build();
-		}
-		return Response.ok(nutzer).build();
-	}
+
 	
 	/**
 	 * Nutzer anhand der Email suchen, QueryParam = email
@@ -165,6 +158,35 @@ public class NutzerResource {
 		
 		
 		return Response.ok(nutzer).build();
+	}
+	
+	
+//	@POST
+//	@Path("/friend")
+//	@Consumes(APPLICATION_JSON)
+//	@Transactional
+//	public Response addFriend(@QueryParam("requester_id") String requester_id,  
+//								@QueryParam("friend_id") String friend_id) {
+//		
+//		Nutzer friend = ns.addFriend(requester_id, friend_id);
+//		
+//		if (friend == null) {
+//			//TODO Excpetion werfen..
+//		}
+//						
+//		return Response.ok(friend).build();
+//	}
+	
+	@POST
+	@Path("/friend/{id:[1-9][0-9]*}")
+	@Consumes(APPLICATION_JSON)
+	@Transactional
+	public Response addFriend(@PathParam("id") Long nutzer_id, Long[] friend_ids) {
+		
+		Nutzer requester = ns.addFriend(nutzer_id, friend_ids);
+		
+		return Response.ok(requester).build();
+		
 	}
 	
 	
