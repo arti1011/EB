@@ -1,13 +1,19 @@
 package de.party.nutzer.service;
 
+import static de.party.util.Constants.MAX_AUTOCOMPLETE;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 
 import com.google.common.base.Strings;
 
+import de.party.nutzer.domain.Freundschaft;
 import de.party.nutzer.domain.Nutzer;
 
 public class NutzerService {
@@ -34,34 +40,23 @@ public class NutzerService {
 		return nutzer;
 	}
 
-	public Nutzer findNutzerByEmail(String email) {
-		if (Strings.isNullOrEmpty(email)) {
-				return null;
-		}
-		return em.find(Nutzer.class, email);
-	}
 	
-	/**
-	 * Service Methode 
-	 * 
-	 * @param email
-	 * @param password
-	 * @return
-	 */
-	public Nutzer authService(String email, String password) {
-		//Prüfen ob der User existiert, suche anhand der email
-		Nutzer nutzer = findNutzerByEmail(email);
-		if (nutzer == null) {
-			return null;
+	public Nutzer findNutzerByEmail(String email) {
+		Nutzer nutzer;
+		
+		try {
+			nutzer = em.createNamedQuery(Nutzer.FIND_NUTZER_BY_EMAIL, Nutzer.class)
+											.setParameter(Nutzer.EMAIL_QUERY_PARAM, email)
+											.getSingleResult();
+			
 		}
-		//Prüfe ob Passwort des gefundenen Users dem eingegeben Password entspricht
-		if (!nutzer.getPassword().equals(password)) {
+		catch (NoResultException e) {
 			return null;
 		}
 		return nutzer;
-		
 	}
-
+	
+	
 	public Nutzer findNutzerById(Long id) {
 		if(id == null) {
 			return null;
@@ -70,6 +65,82 @@ public class NutzerService {
 		return nutzer;
 		
 	}
+
+	/**
+	 * Alle Nutzer zum gesuchten Namen auslesen
+	 * 
+	 * @param nachname
+	 * @return Liste mit Nutzerobjekten
+	 */
+	public List<Nutzer> findNutzerByNachname(String nachname) {
+		
+		List<Nutzer> nutzer;
+		
+		nutzer = em.createNamedQuery(Nutzer.FIND_NUTZER_BY_NACHNAME, Nutzer.class)
+					.setParameter(Nutzer.NACHNAME_QUERY_PARAM, nachname)
+					.getResultList();
+			
+		
+		return nutzer;
+	}
+
+
+	public List<Nutzer> findNutzerByNachnamePrefix(String nachnamePrefix) {
+		
+		if (Strings.isNullOrEmpty(nachnamePrefix))
+			return Collections.emptyList();
+
+
+		return em.createNamedQuery(Nutzer.FIND_NUTZER_BY_NACHNAME_PREFIX, Nutzer.class)
+				 .setParameter(Nutzer.NACHNAME_QUERY_PARAM, nachnamePrefix.toUpperCase() + '%')
+				 .setMaxResults(MAX_AUTOCOMPLETE)
+				 .getResultList();
+		
+	}
+	
+	/**
+	 *  Freund hinzufügen, Rückgabewert ist das NutzerObjekt das als Freund zugefügt wurde
+	 * 
+	 * @param request_id
+	 * @param friend_id
+	 * @return Nutzer (== Friend)
+	 */
+	public Nutzer addFriend(Long nutzer_id, Long[] friend_ids) {
+		
+		List<Nutzer> nutzer_liste = new ArrayList<Nutzer>();
+		
+		Freundschaft freundschaft = null;
+		
+		//Null-Check und ob überhaupt Ids enthalten sind
+		if (nutzer_id == null || friend_ids.length == 0) {
+			return null;
+		}
+		//Nutzer der die Anfrage stellt herausfiltern(immer erstes Objekt im Array)
+		Nutzer requester = findNutzerById(nutzer_id);
+		
+		
+		//Iteration über Ids und Bauen der Nutzer-Objekte und Zufügen in freundschafts_liste
+		for (int i = 0 ; i < friend_ids.length ; ++i) {
+			Nutzer friend = findNutzerById(Long.valueOf(friend_ids[i]));
+			if (friend == null) {
+				break;
+			}
+			nutzer_liste.add(friend);
+		}
+		
+		//Iterieren über die Nutzer_Liste und Freundschaftsobjekte bauen, diese persistieren
+		for (Nutzer friend : nutzer_liste) {
+			freundschaft = new Freundschaft();
+			freundschaft.setOwner(requester);
+			freundschaft.setPerson(friend);
+			
+			em.persist(freundschaft);
+		}
+		
+		return requester;
+	}
+
+
 	
 	
 }
