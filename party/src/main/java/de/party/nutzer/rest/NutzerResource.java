@@ -26,6 +26,7 @@ import javax.ws.rs.core.UriInfo;
 
 
 
+
 import org.jboss.logging.Logger;
 
 import com.google.common.base.Strings;
@@ -34,6 +35,7 @@ import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import static javax.ws.rs.core.MediaType.APPLICATION_XML;
 import static javax.ws.rs.core.MediaType.TEXT_PLAIN;
 import de.party.nutzer.domain.Nutzer;
+import de.party.nutzer.domain.ProfilePicture;
 import de.party.nutzer.service.NutzerService;
 import de.party.util.rest.NotFoundException;
 
@@ -207,4 +209,39 @@ public class NutzerResource {
 				
 		
 	}
+	
+	@GET
+	@Path("/myprofilepicture/{id:[1-9][0-9]*}")
+	public Response getProfilePicture(@PathParam("id") Long id) {
+		
+		ProfilePicture profilepicture;
+		
+		profilepicture = ns.findMyProfilePicture(id);
+		
+		if(profilepicture ==  null) {
+			throw new NoSuchElementException();
+		}
+		
+		
+		return Response.ok(profilepicture).build();
+	}
+	
+	@POST
+	@Consumes(APPLICATION_JSON)
+	@Produces({APPLICATION_JSON, APPLICATION_XML})
+	@Transactional
+	public Response addProfilePicture(ProfilePicture profilepicture) {
+		
+		
+		profilepicture = ns.addProfilePicture(profilepicture);
+		
+		
+	
+		return Response.ok(profilepicture).build();
+				
+				
+		
+	}
+	
+	
 }

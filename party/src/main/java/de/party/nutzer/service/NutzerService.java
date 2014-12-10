@@ -15,6 +15,8 @@ import com.google.common.base.Strings;
 
 import de.party.nutzer.domain.Freundschaft;
 import de.party.nutzer.domain.Nutzer;
+import de.party.nutzer.domain.ProfilePicture;
+import static de.party.util.Constants.DEFAULT_PICTURE;
 
 public class NutzerService {
 
@@ -32,6 +34,7 @@ public class NutzerService {
 			throw new EmailExistsException(nutzer.getEmail());
 		}
 		nutzer.setErzeugt(new Date());
+		nutzer.setPicture_id(DEFAULT_PICTURE);
 		
 		//TODO mail exception werfen
 		
@@ -138,6 +141,49 @@ public class NutzerService {
 		}
 		
 		return requester;
+	}
+	
+	public ProfilePicture findMyProfilePicture(Long id) {
+		
+		ProfilePicture pp;
+		
+		try {
+			pp = em.find(ProfilePicture.class, id);
+			return pp;
+			
+		}
+		catch (NoResultException e) {
+			return null;
+		}
+			
+		
+	}
+	
+	
+	public ProfilePicture addProfilePicture(ProfilePicture pp) {
+
+		if (pp == null) {
+			return null;
+		}
+
+		em.detach(pp);
+		
+		ProfilePicture tmp = null;
+
+
+
+		// Gibt es ein anderes Objekt mit gleicher ID?
+		tmp = findMyProfilePicture(pp.getUser_id());
+		if (tmp != null) {
+			em.detach(tmp);
+			pp = em.merge(pp);
+			}
+		
+		em.persist(pp);
+		
+
+
+		return pp;
 	}
 
 

@@ -30,6 +30,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
 import static de.party.util.Constants.KEINE_ID;
+import static de.party.util.Constants.DEFAULT_PICTURE;
 
 
 
@@ -76,6 +77,11 @@ public class Nutzer implements Serializable {
 	@GeneratedValue
 	@Column(nullable = false, updatable = false)
 	private Long id = KEINE_ID;
+	
+	
+	@Column(nullable = false)
+	@NotNull
+	private Long picture_id = DEFAULT_PICTURE;
 
 
 	// Freunde Relation
@@ -140,6 +146,20 @@ public class Nutzer implements Serializable {
 	public Nutzer() {
 		super();
 	}
+	
+	
+
+	public Long getPicture_id() {
+		return picture_id;
+	}
+
+
+
+	public void setPicture_id(Long picture_id) {
+		this.picture_id = picture_id;
+	}
+
+
 
 	public Nutzer(String plz, String ort, String strasse, String hausnr) {
 		super();
