@@ -2,7 +2,6 @@ package de.party.nutzer.rest;
 
 import java.util.List;
 import java.util.NoSuchElementException;
-
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
@@ -18,6 +17,8 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
+
+
 
 
 
@@ -53,6 +54,9 @@ public class NutzerResource {
 	
 	@Context
 	private UriInfo uriInfo;
+	
+	@Inject
+	private UriHelperNutzer uriHelperNutzer;
 	
 	@Inject 
 	private NutzerService ns;
@@ -176,6 +180,27 @@ public class NutzerResource {
 //						
 //		return Response.ok(friend).build();
 //	}
+	
+	/**
+	 * Freunde anhand der eigenen ID finden
+	 * 
+	 * Aufruf: ../friend/?id=1
+	 * 
+	 * @param id
+	 * @return Nutzer-Objekte, die in der Relation Freundschaft zu der eingegebenen ID auftauchen
+	 */
+	@GET
+	@Path("/friend/")
+	public Response findFriendsById(@QueryParam(Nutzer.ID_QUERY_PARAM) Long id) {
+		
+		final List<Nutzer> friends = ns.findFriendsById(id);
+			
+		
+		
+		return Response.ok(friends).build();
+	}
+	
+
 	
 	@POST
 	@Path("/friend/{id:[1-9][0-9]*}")

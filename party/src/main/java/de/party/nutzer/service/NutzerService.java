@@ -132,12 +132,41 @@ public class NutzerService {
 		for (Nutzer friend : nutzer_liste) {
 			freundschaft = new Freundschaft();
 			freundschaft.setOwner(requester);
-			freundschaft.setPerson(friend);
+			freundschaft.setFriend(friend);
 			
 			em.persist(freundschaft);
 		}
 		
 		return requester;
+	}
+
+
+	public List<Nutzer> findFriendsById(Long id) {
+		
+		
+		
+		Nutzer owner = findNutzerById(id);
+		
+		List<Freundschaft> queryResult = (em.createNamedQuery(Freundschaft.FIND_FRIENDS_BY_ID, Freundschaft.class)
+				.setParameter(Freundschaft.ID_QUERY_PARAM, owner)
+				.getResultList());
+		
+		List<Nutzer> friends = new ArrayList<Nutzer>();
+		
+		for (Freundschaft freund : queryResult) {
+			
+			Nutzer nutzer = findNutzerById(freund.getFriend().getId());
+			friends.add(nutzer);
+		}
+		
+		
+				
+		
+//		myFriends = nutzer.getMyFriends();
+		
+		return friends;
+		
+		
 	}
 
 

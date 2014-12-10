@@ -5,4 +5,3 @@
 
 DROP SEQUENCE hibernate_sequence;
 CREATE SEQUENCE hibernate_sequence START WITH 100;
->>>>>>> branch 'master' of https://github.com/arti1011/Eb

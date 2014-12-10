@@ -2,18 +2,29 @@ package de.party.nutzer.domain;
 
 import java.io.Serializable;
 
-import javax.persistence.Column;
+
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
+import javax.persistence.IdClass;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
+
+
 
 @Entity
 @Table
 @XmlRootElement
+@NamedQueries( {
+@NamedQuery(name = Freundschaft.FIND_FRIENDS_BY_ID,
+query = "SELECT DISTINCT f"
+		+ " FROM Freundschaft f  "
+		+ " WHERE f.owner = :" + Freundschaft.ID_QUERY_PARAM)
+})
+@IdClass(FreundschaftKey.class)
 public class Freundschaft implements Serializable {
 	
 	/**
@@ -21,58 +32,40 @@ public class Freundschaft implements Serializable {
 	 */
 	private static final long serialVersionUID = -4292729479002743257L;
 
+	public final static String FIND_FRIENDS_BY_ID = "findFriendsById";
+	public final static String ID_QUERY_PARAM = "owner";
+
 
 	@Id
-	@GeneratedValue
-	@Column(nullable = false, updatable = false)
-	private Long id;
-	
-
-	// Nutzer der Freundschaft anfrägt
-	@ManyToOne()
-	@JoinColumn(name = "owner_id")
+	@ManyToOne
+	@XmlTransient
 	private Nutzer owner;
 	
-	
-	// Nutzer der Freundschaft akzeptiert
-	@ManyToOne()
-	@JoinColumn(name = "person_id")
-	private Nutzer person;
-
+	@Id
+	@ManyToOne
+	@XmlTransient
+	private Nutzer friend;
 
 	public Nutzer getOwner() {
 		return owner;
 	}
 
-
 	public void setOwner(Nutzer owner) {
 		this.owner = owner;
 	}
 
-
-	public Nutzer getPerson() {
-		return person;
+	public Nutzer getFriend() {
+		return friend;
 	}
 
-
-	public void setPerson(Nutzer person) {
-		this.person = person;
+	public void setFriend(Nutzer friend) {
+		this.friend = friend;
 	}
 
-
-	public Long getId() {
-		return id;
-	}
-
-	public Freundschaft(Nutzer requester, Nutzer friend) {
-		this.owner = requester;
-		this.person = friend;
-	}
+	
 	
 	public Freundschaft() {
 		super();
 	}
-	
-	
 	
 }

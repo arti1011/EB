@@ -5,9 +5,10 @@ package de.party.nutzer.domain;
 import static javax.persistence.TemporalType.TIMESTAMP;
 
 import java.io.Serializable;
-import java.util.ArrayList;
+import java.net.URI;
 import java.util.Date;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
@@ -22,6 +23,7 @@ import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
+import javax.persistence.Transient;
 import javax.persistence.Version;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
@@ -48,8 +50,11 @@ import static de.party.util.Constants.KEINE_ID;
 	@NamedQuery(name = Nutzer.FIND_NUTZER_BY_NACHNAME_PREFIX,
 						query = "SELECT n"
 									+ " FROM Nutzer n"
-									+ " WHERE UPPER (n.nachname) LIKE :" + Nutzer.NACHNAME_QUERY_PARAM)
-
+									+ " WHERE UPPER (n.nachname) LIKE :" + Nutzer.NACHNAME_QUERY_PARAM),
+//	@NamedQuery(name = Nutzer.FIND_FRIENDS_BY_ID,
+//						query = "SELECT DISTINCT n"
+//								+ " FROM Nutzer n  LEFT JOIN FETCH n.myFriends"
+//								+ " WHERE n.id = :" + Nutzer.ID_QUERY_PARAM)		
 })
 @XmlRootElement
 public class Nutzer implements Serializable {
@@ -62,6 +67,9 @@ public class Nutzer implements Serializable {
 	public final static String FIND_NUTZER_BY_NACHNAME = "findNutzerByNachname";
 	public final static String FIND_NUTZER_BY_NACHNAME_PREFIX = "findNutzerByNachnamePrefix";
 	public final static String NACHNAME_QUERY_PARAM = "nachname";
+	
+	public final static String FIND_FRIENDS_BY_ID = "findFriendsById";
+	public final static String ID_QUERY_PARAM = "id";
 	
 		
 	private static final int PLZ_LENGTH_MAX = 5;
@@ -79,8 +87,8 @@ public class Nutzer implements Serializable {
 
 
 	// Freunde Relation
-	@OneToMany(mappedBy = "owner", cascade=CascadeType.ALL, orphanRemoval = true)	
-	private List<Freundschaft> freundschaft = new ArrayList<Freundschaft>();
+	@OneToMany(mappedBy = "owner", cascade = CascadeType.ALL)
+	private Set<Freundschaft> myFriends = new HashSet<>();
 	
 	@Column(nullable = false)
 	@NotNull(message = "{nutzerverwaltung.email.notNull")
@@ -170,6 +178,19 @@ public class Nutzer implements Serializable {
 		this.email = email;
 	}
 	
+	
+	@XmlTransient
+	public Set<Freundschaft> getMyFriends() {
+		return myFriends;
+	}
+
+	@Transient
+	private URI friendsUri;
+	
+	public void setMyFriends(Set<Freundschaft> myFriends) {
+		this.myFriends = myFriends;
+	}
+
 	public String getNachname() {
 		return nachname;
 	}
@@ -247,6 +268,14 @@ public class Nutzer implements Serializable {
 
 	public void setAktualisiert(Date aktualisiert) {
 		this.aktualisiert = aktualisiert;
+	}
+
+	public URI getFriendsUri() {
+		return friendsUri;
+	}
+
+	public void setFriendsUri(URI friendsUri) {
+		this.friendsUri = friendsUri;
 	}
 
 	@Override
