@@ -18,7 +18,9 @@ import javax.ws.rs.core.Response;
 
 
 
+
 import de.party.auth.service.AuthService;
+import de.party.nutzer.domain.Adresse;
 import de.party.nutzer.domain.Nutzer;
 import de.party.nutzer.service.NutzerService;
 
@@ -54,6 +56,10 @@ public class AuthResource {
 	@Transactional
 	public Response registrateUser(@Valid Nutzer nutzer) {
 		
+		final Adresse adresse = nutzer.getAdresse();
+		if (adresse != null) {
+			adresse.setNutzer(nutzer);
+		}
 		
 		nutzer = ns.registrateUser(nutzer);
 		

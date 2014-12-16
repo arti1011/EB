@@ -3,11 +3,15 @@ package de.party.nutzer.domain;
 
 
 import static javax.persistence.TemporalType.TIMESTAMP;
+import static javax.persistence.CascadeType.REMOVE;
+import static javax.persistence.CascadeType.PERSIST;
 
 import java.io.Serializable;
 import java.net.URI;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.persistence.Basic;
@@ -16,9 +20,11 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
 import javax.persistence.Table;
@@ -27,10 +33,10 @@ import javax.persistence.Transient;
 import javax.persistence.Version;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
-import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
+import de.party.party.domain.Party;
 import static de.party.util.Constants.KEINE_ID;
 import static de.party.util.Constants.DEFAULT_PICTURE;
 
@@ -73,14 +79,7 @@ public class Nutzer implements Serializable {
 	public final static String ID_QUERY_PARAM = "id";
 	
 		
-	private static final int PLZ_LENGTH_MAX = 5;
-	private static final int ORT_LENGTH_MIN = 2;
-	private static final int ORT_LENGTH_MAX = 32;
-	private static final int STRASSE_LENGTH_MIN = 2;
-	private static final int STRASSE_LENGTH_MAX = 32;
-	private static final int HAUSNR_LENGTH_MAX = 4;
-
-	
+		
 	@Id
 	@GeneratedValue
 	@Column(nullable = false, updatable = false)
@@ -90,11 +89,17 @@ public class Nutzer implements Serializable {
 	@Column(nullable = false)
 	@NotNull
 	private Long picture_id = DEFAULT_PICTURE;
-
+	
 
 	// Freunde Relation
 	@OneToMany(mappedBy = "owner", cascade = CascadeType.ALL)
 	private Set<Freundschaft> myFriends = new HashSet<>();
+	
+	// Ist Veranstalter
+	@OneToMany
+	@JoinColumn(name="veranstalter", nullable = false)
+	@XmlTransient
+	private List<Party> veranstalter;
 	
 	@Column(nullable = false)
 	@NotNull(message = "{nutzerverwaltung.email.notNull")
@@ -112,29 +117,10 @@ public class Nutzer implements Serializable {
 	@NotNull(message = "{nutzerverwaltung.vorname.notNull}")
 	private String vorname;	
 	
-	
+		
 	@Version
 	@Basic(optional = false)
 	private int version = 1;
-
-	@Column(length = PLZ_LENGTH_MAX, nullable = false)
-	@NotNull(message = "{nutzerverwaltung.plz.notNull}")
-	@Size(max = PLZ_LENGTH_MAX, message="{nutzerverwaltung.plz.length}")
-	private String plz;
-
-	@Column(length = ORT_LENGTH_MAX, nullable = false)
-	@NotNull(message = "{nutzerverwaltung.ort.notNull}")
-	@Size(min = ORT_LENGTH_MIN, max = ORT_LENGTH_MAX, message = "{nutzerverwaltung.ort.length}")
-	private String ort;
-
-	@Column(length = STRASSE_LENGTH_MAX, nullable = false)
-	@NotNull(message = "{nutzerverwaltung.strasse.notNull}")
-	@Size(min = STRASSE_LENGTH_MIN, max = STRASSE_LENGTH_MAX, message = "{nutzerverwaltung.strasse.length}")
-	private String strasse;
-
-	@Column(length = HAUSNR_LENGTH_MAX)
-	@Size(max = HAUSNR_LENGTH_MAX, message = "{nutzerverwaltung.hausnr.length}")
-	private String hausnr;
 
 	//TODO JSON IGNORE
 	@NotNull(message = "{nutzerverwaltung.password.notNull}")
@@ -151,6 +137,9 @@ public class Nutzer implements Serializable {
 	@XmlTransient
 	private Date aktualisiert;
 
+	@OneToOne(cascade = {PERSIST, REMOVE}, mappedBy = "nutzer")
+	private Adresse adresse;
+	
 	public Nutzer() {
 		super();
 	}
@@ -169,12 +158,12 @@ public class Nutzer implements Serializable {
 
 
 
-	public Nutzer(String plz, String ort, String strasse, String hausnr) {
+	public Nutzer(String nachname, String vorname, String email) {
 		super();
-		this.plz = plz;
-		this.ort = ort;
-		this.strasse = strasse;
-		this.hausnr = hausnr;
+		this.nachname = nachname;
+		this.vorname = vorname;
+		this.email = email;
+		
 	}
 	@PrePersist
 	protected void prePerstist() {
@@ -190,6 +179,41 @@ public class Nutzer implements Serializable {
 		return id;
 	}
 	
+	@XmlTransient
+	public List<Party> getVeranstalter() {
+		if (veranstalter == null) {
+			return null;
+		}
+		return Collections.unmodifiableList(veranstalter);
+	}
+
+	public void setVeranstalter(List<Party> veranstalter) {
+		
+		if (this.veranstalter == null) {
+			this.veranstalter = veranstalter;
+			return;
+		}
+		
+		// Wiederverwendung der vorhandenen Collection
+		this.veranstalter.clear();
+		if (veranstalter != null) {
+			this.veranstalter.addAll(veranstalter);
+		}
+		
+	}
+
+	
+	public Adresse getAdresse() {
+		return adresse;
+	}
+
+
+	public void setAdresse(Adresse adresse) {
+		this.adresse = adresse;
+	}
+
+
+
 	public String getEmail() {
 		return email;
 	}
@@ -235,37 +259,7 @@ public class Nutzer implements Serializable {
 		this.version = version;
 	}
 
-	public String getPlz() {
-		return plz;
-	}
-
-	public void setPlz(String plz) {
-		this.plz = plz;
-	}
-
-	public String getOrt() {
-		return ort;
-	}
-
-	public void setOrt(String ort) {
-		this.ort = ort;
-	}
-
-	public String getStrasse() {
-		return strasse;
-	}
-
-	public void setStrasse(String strasse) {
-		this.strasse = strasse;
-	}
-
-	public String getHausnr() {
-		return hausnr;
-	}
-
-	public void setHausnr(String hausnr) {
-		this.hausnr = hausnr;
-	}
+	
 
 	public String getPassword() {
 		return password;
@@ -336,12 +330,16 @@ public class Nutzer implements Serializable {
 		return true;
 	}
 
+
+
 	@Override
 	public String toString() {
-		return "Nutzer [email=" + email + ", nachname=" + nachname
-				+ ", vorname=" + vorname + ", plz=" + plz + ", ort=" + ort
-				+ ", strasse=" + strasse + ", hausnr=" + hausnr + "]";
+		return "Nutzer [id=" + id + ", email=" + email + ", nachname="
+				+ nachname + ", vorname=" + vorname + ", password=" + password
+				+ ", aktualisiert=" + aktualisiert + "]";
 	}
+
+	
 
 	
 
