@@ -222,6 +222,27 @@ public class NutzerService {
 	}
 
 
+	public List<Nutzer> findFriendsByNutzer(Nutzer nutzer) {
+		List<Freundschaft> myFriends =  em.createNamedQuery(Freundschaft.FIND_FRIENDS_BY_NUTZER, Freundschaft.class)
+										  .setParameter(Freundschaft.ID_QUERY_PARAM, nutzer)
+										  .getResultList();
+				
+		
+		List<Nutzer> friends = new ArrayList<Nutzer>();
+		for (Freundschaft freund : myFriends) {
+			Nutzer friend = findNutzerById(freund.getFriend().getId());
+			
+			friends.add(friend);
+		}
+		
+//				em.createNamedQuery(Nutzer.FIND_FRIENDS_BY_NUTZER, Nutzer.class)
+//									.setParameter(Nutzer.ID_QUERY_PARAM, nutzer.getId())
+//									.getResultList();
+		return friends;
+		
+	}
+
+
 	
 	
 }

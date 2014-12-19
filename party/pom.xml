@@ -47,151 +47,218 @@
 
         <!-- Define the version of the JBoss BOMs we want to import to specify 
             tested stacks. -->
-        <version.jboss.bom>1.0.7.Final</version.jboss.bom>
-        <!-- Alternatively, comment out the above line, and un-comment the line
-            below to use version 1.0.4.Final-redhat-4 which is a release certified to
-            work with JBoss EAP 6. It requires you have access to the JBoss EAP 6
-            maven repository. -->
-        <!-- <version.jboss.bom>1.0.4.Final-redhat-4</version.jboss.bom>> -->
+        <wildfly-spec-api.version>8.1.0.Final</wildfly-spec-api.version>
+        <resteasy-bom.version>3.0.4.Final</resteasy-bom.version>
+        <hibernate-validator.version>5.1.0.Alpha1</hibernate-validator.version>
+		<hibernate-validator-annotation-processor.version>5.1.0.Alpha1</hibernate-validator-annotation-processor.version>
+  
 
         <!-- other plugin versions -->
         <version.surefire.plugin>2.10</version.surefire.plugin>
-        <version.war.plugin>2.1.1</version.war.plugin>
+        <version.war.plugin>2.4</version.war.plugin>
 
         <!-- maven-compiler-plugin -->
         <maven.compiler.target>1.7</maven.compiler.target>
         <maven.compiler.source>1.7</maven.compiler.source>
+        
+        <!--  maven depdendency plugin -->
+        <maven-dependency-plugin.version>2.8</maven-dependency-plugin.version>
     </properties>
 
+	<repositories>
+		<repository>
+			<id>jboss</id>
+			<name>JBoss Maven 2 Repository</name>
+			<url>https://repository.jboss.org/nexus/content/groups/public</url>
+		</repository>
+		<repository>
+			<id>java.net</id>
+			<name>java.net Maven Repository</name>
+			<url>https://maven.java.net/content/repositories/releases</url>
+		</repository>
+		<repository>
+			<id>codehaus</id>
+			<name>Codehaus Maven 2 Repository</name>
+			<url>https://nexus.codehaus.org/content/repositories/releases</url>
+		</repository>
+	</repositories>
 
     <dependencyManagement>
         <dependencies>
-            <!-- JBoss distributes a complete set of Java EE 6 APIs including a Bill 
-                of Materials (BOM). A BOM specifies the versions of a "stack" (or a collection) 
-                of artifacts. We use this here so that we always get the correct versions 
-                of artifacts. Here we use the jboss-javaee-6.0-with-tools stack (you can 
-                read this as the JBoss stack of the Java EE 6 APIs, with some extras tools 
-                for your project, such as Arquillian for testing) and the jboss-javaee-6.0-with-hibernate 
-                stack you can read this as the JBoss stack of the Java EE 6 APIs, with extras 
-                from the Hibernate family of projects) -->
-            <dependency>
-                <groupId>org.jboss.bom</groupId>
-                <artifactId>jboss-javaee-6.0-with-tools</artifactId>
-                <version>${version.jboss.bom}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.jboss.bom</groupId>
-                <artifactId>jboss-javaee-6.0-with-hibernate</artifactId>
-                <version>${version.jboss.bom}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-            <dependency>
-	            <groupId>org.jboss.resteasy</groupId>
-	            <artifactId>resteasy-bom</artifactId>
-	            <version>3.0.6.Final</version>
-	            <scope>import</scope>
-            	<type>pom</type>
-	        </dependency>
+           
+           <dependency>
+				<groupId>org.wildfly</groupId>
+				<artifactId>wildfly-spec-api</artifactId>
+				<version>${wildfly-spec-api.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
          
         </dependencies>
     </dependencyManagement>
 
     <dependencies>
 
-        <!-- First declare the APIs we depend on and need for compilation. All 
-            of them are provided by JBoss AS 7 -->
-
-        <!-- Import the CDI API, we use provided scope as the API is included in 
-            JBoss AS 7 -->
-        <dependency>
-            <groupId>javax.enterprise</groupId>
-            <artifactId>cdi-api</artifactId>
-            <scope>provided</scope>
-        </dependency>
-
-        <!-- Import the Common Annotations API (JSR-250), we use provided scope 
-            as the API is included in JBoss AS 7 -->
-        <dependency>
-            <groupId>org.jboss.spec.javax.annotation</groupId>
-            <artifactId>jboss-annotations-api_1.1_spec</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <!--  Transactional -->
-        <!-- Import the JAX-RS API, we use provided scope as the API is included 
-            in JBoss AS 7 -->
-        <dependency>
-            <groupId>org.jboss.spec.javax.ws.rs</groupId>
-            <artifactId>jboss-jaxrs-api_1.1_spec</artifactId>
-            <scope>provided</scope>
-        </dependency>
-
-        <!-- Import the JPA API, we use provided scope as the API is included in 
-            JBoss AS 7 -->
-        <dependency>
+     	<!-- JPA -->
+     	<dependency>
             <groupId>org.hibernate.javax.persistence</groupId>
-            <artifactId>hibernate-jpa-2.0-api</artifactId>
+            <artifactId>hibernate-jpa-2.1-api</artifactId>
             <scope>provided</scope>
         </dependency>
 
-        <!-- Import the EJB API, we use provided scope as the API is included in 
-            JBoss AS 7 -->
-        <dependency>
-            <groupId>org.jboss.spec.javax.ejb</groupId>
-            <artifactId>jboss-ejb-api_3.1_spec</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <!--  Transactional -->
+		<!-- ========================================================================================= -->
+		<!-- B e a n   V a l i d a t i o n ,   H i b e r n a t e   V a l i d a t o r                   -->
+		<!-- ========================================================================================= -->
+		
 		<dependency>
-			<groupId>org.jboss.spec.javax.transaction</groupId>
-			<artifactId>jboss-transaction-api_1.2_spec</artifactId>
-			<version>1.0.0.Final</version>
+			<groupId>javax.validation</groupId>
+			<artifactId>validation-api</artifactId>
+			<scope>provided</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-validator</artifactId>
+			<version>${hibernate-validator.version}</version><!--$NO-MVN-MAN-VER$-->
+			<scope>provided</scope>
+		</dependency>
+				
+		<!-- http://docs.jboss.org/hibernate/stable/validator/reference/en-US/html/validator-annotation-processor.html -->
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-validator-annotation-processor</artifactId>
+			<version>${hibernate-validator-annotation-processor.version}</version>
+			<scope>provided</scope>
+		</dependency>	
+        
+        <!-- ========================================================================================= -->
+		<!-- J A X B                                                                                   -->
+		<!-- ========================================================================================= -->
+		
+		<dependency>
+			<groupId>org.jboss.spec.javax.xml.bind</groupId>
+			<artifactId>jboss-jaxb-api_2.2_spec</artifactId>
 			<scope>provided</scope>
 		</dependency>
 		
-        <!-- JSR-303 (Bean Validation) Implementation -->
-        <!-- Provides portable constraints such as @Email -->
-        <!-- Hibernate Validator is shipped in JBoss AS 7 -->
-        <dependency>
-            <groupId>org.hibernate</groupId>
-            <artifactId>hibernate-validator</artifactId>
-            <scope>provided</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.slf4j</groupId>
-                    <artifactId>slf4j-api</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
+		<!-- ========================================================================================= -->
+		<!-- C D I                                                                                    -->
+		<!-- ========================================================================================= -->
 
+		<dependency>
+			<groupId>javax.enterprise</groupId>
+			<artifactId>cdi-api</artifactId>
+			<scope>provided</scope>
+		</dependency>
+		
+		<!-- ========================================================================================= -->
+		<!-- C o m m o n   A n n o t a t i o n s                                                       -->
+		<!-- ========================================================================================= -->
+		
+		<dependency>
+			<groupId>org.jboss.spec.javax.annotation</groupId>
+  			<artifactId>jboss-annotations-api_1.2_spec</artifactId>
+			<scope>provided</scope>
+  		</dependency>
+        
+        <!-- ========================================================================================= -->
+		<!-- J B o s s   L o g g i n g                                                                 -->
+		<!-- ========================================================================================= -->
+		
+		<dependency>
+			<groupId>org.jboss.logging</groupId>
+			<artifactId>jboss-logging</artifactId>
+			<scope>provided</scope>
+		</dependency>
+		
+		<!-- ========================================================================================= -->
+		<!-- J T A                                                                                     -->
+		<!-- ========================================================================================= -->
+		
+		<dependency>
+			<groupId>org.jboss.spec.javax.transaction</groupId>
+			<artifactId>jboss-transaction-api_1.2_spec</artifactId>
+			<scope>provided</scope>
+		</dependency>		
+       
+        
+        <!-- ========================================================================================= -->
+		<!-- E J B                                                                                     -->
+		<!-- ========================================================================================= -->
+		
+		<dependency>
+			<groupId>org.jboss.spec.javax.ejb</groupId>
+			<artifactId>jboss-ejb-api_3.2_spec</artifactId>
+			<scope>provided</scope>
+		</dependency>
+        
+
+       <!-- ========================================================================================= -->
+		<!-- J A X - R S ,   R E S T E a s y ,   J a c k s o n                                         -->
+		<!-- ========================================================================================= -->
+		
+		<dependency>
+			<groupId>org.jboss.resteasy</groupId>
+			<artifactId>jaxrs-api</artifactId>
+			<scope>provided</scope>
+		</dependency>
+		
+		<!-- @Wrapped, @Cache -->
+		<dependency>
+			<groupId>org.jboss.resteasy</groupId>
+			<artifactId>resteasy-jaxrs</artifactId>
+			<scope>provided</scope>
+			
+			<exclusions>
+				<!-- In WildFly ist ein aktuelleres slf4j 1.7 -->
+				<exclusion>
+					<groupId>org.slf4j</groupId>
+					<artifactId>slf4j-simple</artifactId>
+				</exclusion>
+				<!-- In WildFly ist ein aktuelleres javassist -->
+				<exclusion>
+					<groupId>javassist</groupId>
+					<artifactId>javassist</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		
+		 <dependency>
+			<groupId>org.jboss.resteasy</groupId>
+			<artifactId>resteasy-jackson-provider</artifactId>
+			<scope>provided</scope>
+		</dependency>
+		
+		<!-- ViolationReport und ResteasyConstraintViolation -->
+		<dependency>
+			<groupId>org.jboss.resteasy</groupId>
+			<artifactId>resteasy-validator-provider-11</artifactId>
+			<scope>provided</scope>
+		</dependency>
+
+		<!-- @Formatted -->
+	    <dependency>
+			<groupId>org.jboss.resteasy</groupId>
+			<artifactId>resteasy-jaxb-provider</artifactId>
+			<scope>provided</scope>
+		</dependency>
+		
+        
         <!-- Import the JSF API, we use provided scope as the API is included in 
             JBoss AS 7 -->
         <dependency>
             <groupId>org.jboss.spec.javax.faces</groupId>
-            <artifactId>jboss-jsf-api_2.1_spec</artifactId>
+            <artifactId>jboss-jsf-api_2.2_spec</artifactId>
             <scope>provided</scope>
         </dependency>
-
-        <!-- Now we declare any tools needed -->
-
-        <!-- Annotation processor to generate the JPA 2.0 metamodel classes for 
-            typesafe criteria queries -->
-        <dependency>
-            <groupId>org.hibernate</groupId>
-            <artifactId>hibernate-jpamodelgen</artifactId>
-            <scope>provided</scope>
-        </dependency>
-
-        <!-- Annotation processor that raising compilation errors whenever constraint 
-            annotations are incorrectly used. -->
-        <dependency>
-            <groupId>org.hibernate</groupId>
-            <artifactId>hibernate-validator-annotation-processor</artifactId>
-            <scope>provided</scope>
-        </dependency>
-
+		
+		<!-- Common Codecs -->
+		<dependency>
+			<groupId>commons-codec</groupId>
+			<artifactId>commons-codec</artifactId>
+		</dependency>
+                
+     
         <!-- Needed for running tests (you may also use TestNG) -->
         <dependency>
             <groupId>junit</groupId>
@@ -217,27 +284,9 @@
 		 <dependency>
 			<groupId>com.google.guava</groupId>
 			<artifactId>guava</artifactId>
-			<version>r05</version>
-		</dependency>
-		<!-- ViolationReport und ResteasyConstraintViolation -->
-		<dependency>
-	        <groupId>org.jboss.resteasy</groupId>
-	        <artifactId>resteasy-jaxrs</artifactId>
-	        <scope>provided</scope>
-	    </dependency>
-	     <dependency>
-	        <groupId>org.jboss.resteasy</groupId>
-	        <artifactId>resteasy-validator-provider-11</artifactId>
-        	<scope>provided</scope>
-	    </dependency>
-	    <!-- ========================================================================================= -->
-		<!-- J A X B                                                                                   -->
-		<!-- ========================================================================================= -->
-		<dependency>
-			<groupId>org.jboss.spec.javax.xml.bind</groupId>
-			<artifactId>jboss-jaxb-api_2.2_spec</artifactId>
-			<scope>provided</scope>
-		</dependency>
+			</dependency>
+		
+	
 	   
     </dependencies>
 
@@ -261,6 +310,12 @@
                 <artifactId>jboss-as-maven-plugin</artifactId>
                 <version>${version.jboss.maven.plugin}</version>
             </plugin>
+            
+            <plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<version>${maven-dependency-plugin.version}</version>
+			</plugin>
         </plugins>
     </build>
 
@@ -303,19 +358,7 @@
             </dependencies>
         </profile>
 
-        <profile>
-            <!-- An optional Arquillian testing profile that executes tests in a remote 
-                JBoss AS instance -->
-            <!-- Run with: mvn clean test -Parq-jbossas-remote -->
-            <id>arq-jbossas-remote</id>
-            <dependencies>
-                <dependency>
-                    <groupId>org.jboss.as</groupId>
-                    <artifactId>jboss-as-arquillian-container-remote</artifactId>
-                    <scope>test</scope>
-                </dependency>
-            </dependencies>
-        </profile>
+       
 
         <profile>
             <!-- When built in OpenShift the 'openshift' profile will be used when 

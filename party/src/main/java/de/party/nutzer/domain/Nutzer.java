@@ -3,12 +3,14 @@ package de.party.nutzer.domain;
 
 
 import static javax.persistence.TemporalType.TIMESTAMP;
+import static javax.persistence.CascadeType.REMOVE;
+import static javax.persistence.CascadeType.PERSIST;
 
 import java.io.Serializable;
 import java.net.URI;
 import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.List;
+
 
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
@@ -19,6 +21,7 @@ import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
 import javax.persistence.Table;
@@ -27,10 +30,11 @@ import javax.persistence.Transient;
 import javax.persistence.Version;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
-import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
+import de.party.party.domain.Party;
+import de.party.party.domain.PartyTeilnahme;
 import static de.party.util.Constants.KEINE_ID;
 import static de.party.util.Constants.DEFAULT_PICTURE;
 
@@ -52,10 +56,14 @@ import static de.party.util.Constants.DEFAULT_PICTURE;
 						query = "SELECT n"
 									+ " FROM Nutzer n"
 									+ " WHERE UPPER (n.nachname) LIKE :" + Nutzer.NACHNAME_QUERY_PARAM),
-//	@NamedQuery(name = Nutzer.FIND_FRIENDS_BY_ID,
-//						query = "SELECT DISTINCT n"
-//								+ " FROM Nutzer n  LEFT JOIN FETCH n.myFriends"
-//								+ " WHERE n.id = :" + Nutzer.ID_QUERY_PARAM)		
+	@NamedQuery(name = Nutzer.FIND_FRIENDS_BY_ID,
+						query = "SELECT DISTINCT n"
+								+ " FROM Nutzer n  LEFT JOIN FETCH n.myFriends"
+								+ " WHERE n.id = :" + Nutzer.ID_QUERY_PARAM),
+//	@NamedQuery(name = Nutzer.FIND_FRIENDS_BY_NUTZER, 
+//						query = "SELECT n"
+//								+ " FROM Nutzer n LEFT JOIN FETCH n.myFriends"
+//								+ " WHERE n.id =:" + Nutzer.ID_QUERY_PARAM) 
 })
 @XmlRootElement
 public class Nutzer implements Serializable {
@@ -72,15 +80,9 @@ public class Nutzer implements Serializable {
 	public final static String FIND_FRIENDS_BY_ID = "findFriendsById";
 	public final static String ID_QUERY_PARAM = "id";
 	
+	public final static String FIND_FRIENDS_BY_NUTZER = "findFriendsByNutzer";
 		
-	private static final int PLZ_LENGTH_MAX = 5;
-	private static final int ORT_LENGTH_MIN = 2;
-	private static final int ORT_LENGTH_MAX = 32;
-	private static final int STRASSE_LENGTH_MIN = 2;
-	private static final int STRASSE_LENGTH_MAX = 32;
-	private static final int HAUSNR_LENGTH_MAX = 4;
-
-	
+		
 	@Id
 	@GeneratedValue
 	@Column(nullable = false, updatable = false)
@@ -90,12 +92,32 @@ public class Nutzer implements Serializable {
 	@Column(nullable = false)
 	@NotNull
 	private Long picture_id = DEFAULT_PICTURE;
-
+	
 
 	// Freunde Relation
 	@OneToMany(mappedBy = "owner", cascade = CascadeType.ALL)
-	private Set<Freundschaft> myFriends = new HashSet<>();
+	private List<Freundschaft> myFriends;
 	
+	@Transient
+	private URI friendsUri;
+	
+//	@ManyToMany
+//	@JoinTable(name="PARTY_NUTZER",
+//				joinColumns={@JoinColumn(name="NUTZER_ID", referencedColumnName="ID")},
+//				inverseJoinColumns={@JoinColumn(name="PARTY_ID", referencedColumnName="ID")})
+//	private List<Party> parties;
+	
+	@OneToMany(mappedBy="veranstalter")
+	private List<Party> veranstalter;
+	
+	@OneToMany(mappedBy="teilnehmer", cascade = CascadeType.ALL)
+	private List<PartyTeilnahme> parties;
+	
+	
+	@Transient
+	private URI partyUri;
+	
+		
 	@Column(nullable = false)
 	@NotNull(message = "{nutzerverwaltung.email.notNull")
 	@Pattern(regexp="[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\."
@@ -112,29 +134,10 @@ public class Nutzer implements Serializable {
 	@NotNull(message = "{nutzerverwaltung.vorname.notNull}")
 	private String vorname;	
 	
-	
+		
 	@Version
 	@Basic(optional = false)
 	private int version = 1;
-
-	@Column(length = PLZ_LENGTH_MAX, nullable = false)
-	@NotNull(message = "{nutzerverwaltung.plz.notNull}")
-	@Size(max = PLZ_LENGTH_MAX, message="{nutzerverwaltung.plz.length}")
-	private String plz;
-
-	@Column(length = ORT_LENGTH_MAX, nullable = false)
-	@NotNull(message = "{nutzerverwaltung.ort.notNull}")
-	@Size(min = ORT_LENGTH_MIN, max = ORT_LENGTH_MAX, message = "{nutzerverwaltung.ort.length}")
-	private String ort;
-
-	@Column(length = STRASSE_LENGTH_MAX, nullable = false)
-	@NotNull(message = "{nutzerverwaltung.strasse.notNull}")
-	@Size(min = STRASSE_LENGTH_MIN, max = STRASSE_LENGTH_MAX, message = "{nutzerverwaltung.strasse.length}")
-	private String strasse;
-
-	@Column(length = HAUSNR_LENGTH_MAX)
-	@Size(max = HAUSNR_LENGTH_MAX, message = "{nutzerverwaltung.hausnr.length}")
-	private String hausnr;
 
 	//TODO JSON IGNORE
 	@NotNull(message = "{nutzerverwaltung.password.notNull}")
@@ -151,6 +154,9 @@ public class Nutzer implements Serializable {
 	@XmlTransient
 	private Date aktualisiert;
 
+	@OneToOne(cascade = {PERSIST, REMOVE}, mappedBy = "nutzer")
+	private Adresse adresse;
+	
 	public Nutzer() {
 		super();
 	}
@@ -169,12 +175,12 @@ public class Nutzer implements Serializable {
 
 
 
-	public Nutzer(String plz, String ort, String strasse, String hausnr) {
+	public Nutzer(String nachname, String vorname, String email) {
 		super();
-		this.plz = plz;
-		this.ort = ort;
-		this.strasse = strasse;
-		this.hausnr = hausnr;
+		this.nachname = nachname;
+		this.vorname = vorname;
+		this.email = email;
+		
 	}
 	@PrePersist
 	protected void prePerstist() {
@@ -190,6 +196,23 @@ public class Nutzer implements Serializable {
 		return id;
 	}
 	
+		
+
+	
+	
+
+
+	public Adresse getAdresse() {
+		return adresse;
+	}
+
+
+	public void setAdresse(Adresse adresse) {
+		this.adresse = adresse;
+	}
+
+
+
 	public String getEmail() {
 		return email;
 	}
@@ -200,14 +223,13 @@ public class Nutzer implements Serializable {
 	
 	
 	@XmlTransient
-	public Set<Freundschaft> getMyFriends() {
+	public List<Freundschaft> getMyFriends() {
 		return myFriends;
 	}
 
-	@Transient
-	private URI friendsUri;
 	
-	public void setMyFriends(Set<Freundschaft> myFriends) {
+	
+	public void setMyFriends(List<Freundschaft> myFriends) {
 		this.myFriends = myFriends;
 	}
 
@@ -235,37 +257,7 @@ public class Nutzer implements Serializable {
 		this.version = version;
 	}
 
-	public String getPlz() {
-		return plz;
-	}
-
-	public void setPlz(String plz) {
-		this.plz = plz;
-	}
-
-	public String getOrt() {
-		return ort;
-	}
-
-	public void setOrt(String ort) {
-		this.ort = ort;
-	}
-
-	public String getStrasse() {
-		return strasse;
-	}
-
-	public void setStrasse(String strasse) {
-		this.strasse = strasse;
-	}
-
-	public String getHausnr() {
-		return hausnr;
-	}
-
-	public void setHausnr(String hausnr) {
-		this.hausnr = hausnr;
-	}
+	
 
 	public String getPassword() {
 		return password;
@@ -297,6 +289,75 @@ public class Nutzer implements Serializable {
 	public void setFriendsUri(URI friendsUri) {
 		this.friendsUri = friendsUri;
 	}
+	
+	
+	
+//	@XmlTransient
+//	public List<Party> getParties() {
+//		if (parties == null) {
+//			return null;
+//		}
+//		return Collections.unmodifiableList(parties);
+//	}
+//
+//
+//
+//	public void setParties(List<Party> parties) {
+//		
+//		if (this.parties == null) {
+//			this.parties = parties;
+//			return;
+//		}
+//		this.parties.clear();
+//		if (parties != null) {
+//			this.parties.addAll(parties);
+//		}
+//	}
+//
+//	public Nutzer setParty(Party party) {
+//		if (parties == null) {
+//			parties = new ArrayList<>();
+//		}
+//		parties.add(party);
+//		return this;
+//	}
+	@XmlTransient
+	public List<PartyTeilnahme> getParties() {
+		return parties;
+	}
+
+
+
+	public void setParties(List<PartyTeilnahme> parties) {
+		this.parties = parties;
+	}
+	
+		
+	public URI getPartyUri() {
+		return partyUri;
+	}
+
+	
+
+
+
+	public void setPartyUri(URI partyUri) {
+		this.partyUri = partyUri;
+	}
+	
+
+	@XmlTransient
+	public List<Party> getVeranstalter() {
+		return veranstalter;
+	}
+
+
+
+	public void setVeranstalter(List<Party> veranstalter) {
+		this.veranstalter = veranstalter;
+	}
+
+
 
 	@Override
 	public int hashCode() {
@@ -336,12 +397,16 @@ public class Nutzer implements Serializable {
 		return true;
 	}
 
+
+
 	@Override
 	public String toString() {
-		return "Nutzer [email=" + email + ", nachname=" + nachname
-				+ ", vorname=" + vorname + ", plz=" + plz + ", ort=" + ort
-				+ ", strasse=" + strasse + ", hausnr=" + hausnr + "]";
+		return "Nutzer [id=" + id + ", email=" + email + ", nachname="
+				+ nachname + ", vorname=" + vorname + ", password=" + password
+				+ ", aktualisiert=" + aktualisiert + "]";
 	}
+
+	
 
 	
 
