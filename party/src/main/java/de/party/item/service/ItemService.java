@@ -7,7 +7,6 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
-import de.party.item.domain.Item;
 import de.party.item.domain.PartyItem;
 
 public class ItemService {
@@ -18,17 +17,17 @@ public class ItemService {
 	private EntityManager em;
 	
 	
-	public List<Item> findAllItems() {
+	public List<PartyItem> findAllItems() {
 		
 		
-		Query query = em.createQuery("SELECT i FROM Item i");
-	    return (List<Item>) query.getResultList();
+		Query query = em.createQuery("SELECT p FROM PartyItem p");
+	    return (List<PartyItem>) query.getResultList();
 			
 		
 	}
 	
 	
-	public Item addItem(Item item) {
+	public PartyItem addItem(PartyItem item) {
 
 		
 		

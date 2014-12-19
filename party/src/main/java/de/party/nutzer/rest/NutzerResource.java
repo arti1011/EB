@@ -286,7 +286,7 @@ public class NutzerResource {
 	}
 	
 	@GET
-	@Path("/myprofilepicture/{id:[1-9][0-9]*}")
+	@Path("/profilepicture/{id:[1-9][0-9]*}")
 	public Response getProfilePicture(@PathParam("id") Long id) {
 		
 		ProfilePicture profilepicture;
@@ -302,12 +302,17 @@ public class NutzerResource {
 	}
 	
 	@POST
+	@Path("/profilepicture")
 	@Consumes(APPLICATION_JSON)
 	@Produces({APPLICATION_JSON, APPLICATION_XML})
 	@Transactional
 	public Response addProfilePicture(ProfilePicture profilepicture) {
 		
-		
+		if(profilepicture == null)
+		{
+			return null;
+		}
+
 		profilepicture = ns.addProfilePicture(profilepicture);
 		
 		
