@@ -168,6 +168,9 @@ public class NutzerService {
 
 		em.detach(pp);
 		
+		Nutzer user = findNutzerById(pp.getUser_id());
+		user.setPicture_id(pp.getUser_id());
+		
 		ProfilePicture tmp = null;
 
 
@@ -175,11 +178,14 @@ public class NutzerService {
 		// Gibt es ein anderes Objekt mit gleicher ID?
 		tmp = findMyProfilePicture(pp.getUser_id());
 		if (tmp != null) {
-			em.detach(tmp);
-			pp = em.merge(pp);
-			}
+			em.remove(tmp);
+		}
+			
+		
+	
 		
 		em.persist(pp);
+		em.merge(user);
 		
 
 
