@@ -16,6 +16,8 @@ import com.google.common.base.Strings;
 import de.party.nutzer.domain.Freundschaft;
 import de.party.nutzer.domain.Nutzer;
 import de.party.nutzer.domain.ProfilePicture;
+import de.party.party.domain.Party;
+import de.party.party.domain.PartyTeilnahme;
 import static de.party.util.Constants.DEFAULT_PICTURE;
 
 public class NutzerService {
@@ -234,6 +236,21 @@ public class NutzerService {
 //									.getResultList();
 		return friends;
 		
+	}
+
+	//TODO 
+	public List<Nutzer> findEingeladeneTeilnehmerByParty(Party party) {
+		final List<PartyTeilnahme> partyTeilnahmeListe = em.createNamedQuery(PartyTeilnahme.FIND_PARTY_TEILNAHME_EINGELADEN, PartyTeilnahme.class)
+													 		.setParameter(PartyTeilnahme.PARAM_PARTY, party)
+													 		.getResultList();
+		
+		if (partyTeilnahmeListe == null || partyTeilnahmeListe.isEmpty()) {
+			return Collections.emptyList();
+		}
+		return null;
+		
+		
+													 
 	}
 
 

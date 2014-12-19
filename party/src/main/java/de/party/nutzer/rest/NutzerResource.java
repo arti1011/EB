@@ -60,6 +60,7 @@ import de.party.util.rest.NotFoundException;
 @Path("/user")
 @Produces(APPLICATION_JSON)
 @Consumes
+@Transactional
 @RequestScoped
 public class NutzerResource {
 
@@ -338,6 +339,12 @@ public class NutzerResource {
 		return Response.ok(parties).build();
 	}
 	
+	/**
+	 * Alle Parties zu denen man eingeladen wurde. Nur die Parties anzeigen die noch stattfinden.
+	 * 
+	 * @param nutzerId
+	 * @return List<Party> mit Status.Type=OFFEN
+	 */
 	@GET
 	@Path("{id:[1-9][0-9]*}/offeneEinladungen")
 	public Response findOffeneEinladungenByNutzerId(@PathParam("id") Long nutzerId) {
@@ -348,27 +355,112 @@ public class NutzerResource {
 		
 	}
 	
-//	//TODO Nochmal grundlegend überdenken...das macht so wohl relativ wenig Sinn
-//	@PUT
-//	@Path("{id:[1-9][0-9]*}/offeneEinladungen/zusagen")
-//	@Consumes(APPLICATION_JSON)
-//	@Produces
-//	public Response zurPartyZusagen(@PathParam("id") Long nutzerId, Party party) {
-//		
-//		final Nutzer nutzer = ns.findNutzerById(nutzerId);
-//				
-//		//Index des Nutzer-Objekts aus der PartyTeilnehmerListe filtern und anschließend Objekt holen
-//		final List<PartyTeilnahme> partyTeilnahmeListe = party.getTeilnehmer();
-//		final int index = partyTeilnahmeListe.indexOf(nutzer);
-//		final PartyTeilnahme originalPartyTeilnahme = partyTeilnahmeListe.get(index);
-//		
-//		originalPartyTeilnahme.setStatus(StatusType.ZUSAGE);
-//		
-//		
-//		
-//		return Response.noContent().build();
-//	}
+	/**
+	 * Offene Einladung zur Party annehmen
+	 * 
+	 * @param nutzerId
+	 * @param party
+	 * @return Response.noContent() (HTTP: 204)
+	 */
+	@PUT
+	@Path("{id:[1-9][0-9]*}/offeneEinladungen/zusagen")
+	@Consumes(APPLICATION_JSON)
+	@Produces
+	public Response offeneEinladungZusagen(@PathParam("id") Long nutzerId, Party party) {
+		
+		
+		
+		final Nutzer nutzer = ns.findNutzerById(nutzerId);
+		
+		//TODO exception message key
+		if (nutzer == null || party == null) {
+			throw new NotFoundException("Sie wurden zu dieser Party nicht eingeladen.");
+		}
+		
+		// Zusagen
+		ps.offeneEinladungZusagen(nutzer, party);
+		
+		return Response.noContent().build();
+	}
+	
+	/**
+	 * Eine Party-Einladung ablehnen (=absagen)
+	 * 
+	 * @param nutzerId
+	 * @param party
+	 * @return Response.noContent() - 204
+	 */
+	@PUT
+	@Path("{id:[1-9][0-9]*}/offeneEinladungen/absagen")
+	@Consumes(APPLICATION_JSON)
+	@Produces
+	public Response offenePartyeinladungAbsagen(@PathParam("id") Long nutzerId, Party party) {
+		
+		
+		
+		final Nutzer nutzer = ns.findNutzerById(nutzerId);
+		
+		//TODO exception message key
+		if (nutzer == null || party == null) {
+			throw new NotFoundException("Sie wurden zu dieser Party nicht eingeladen.");
+		}
+		
+		// Zusagen
+		ps.partyAbsagen(nutzer, party);
+		
+		return Response.noContent().build();
+	}
 	
 	
+	
+	/**
+	 * Alle Parties anzeigen zu denen man zugesagt hat
+	 * 
+	 * Es werden nur die Parties ausgelesen, die noch stattfinden (=zukünftig)
+	 * 
+	 * @param nutzerId
+	 * @return
+	 */
+	@GET
+	@Path("{id:[1-9][0-9]*}/zugesagteParties")
+	public Response findZugesagtePartiesyNutzerId(@PathParam("id") Long nutzerId) {
+		final Nutzer nutzer = ns.findNutzerById(nutzerId);
+		final List<Party> parties = ps.findZugesagtePartiesByNutzer(nutzer);
+		
+		return Response.ok(parties).build();
+		
+	}
+	
+	/**
+	 * Zu einer schon zugesagten Party absagen 
+	 * Hinweis: Nur in Kombination mit voherigem GET nutzen, da dies garantiert, dass nur Parties abgesagt werden
+	 * die noch in der Zukunft liegen
+	 * 
+	 * @param nutzerId
+	 * @param party
+	 * @return no Content - 204
+	 */
+	@PUT
+	@Path("{id:[1-9][0-9]*}/zugesagteParties/absagen")
+	@Consumes(APPLICATION_JSON)
+	@Produces
+	public Response zugesagtePartyAbsagen(@PathParam("id") Long nutzerId, Party party) {
+		
+		
+		
+		final Nutzer nutzer = ns.findNutzerById(nutzerId);
+		
+		//TODO exception message key
+		if (nutzer == null || party == null) {
+			throw new NotFoundException("Sie wurden zu dieser Party nicht eingeladen.");
+		}
+		
+		// Zusagen
+		ps.partyAbsagen(nutzer, party);
+		
+		return Response.noContent().build();
+	}
+	
+		
 	
 }

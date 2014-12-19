@@ -1,7 +1,10 @@
 package de.party.party.rest;
 
+import java.util.List;
+
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
+import javax.transaction.Transactional;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -12,7 +15,10 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
+import de.party.nutzer.domain.Nutzer;
+import de.party.nutzer.service.NutzerService;
 import de.party.party.domain.Party;
+import de.party.party.domain.PartyTeilnahme;
 import de.party.party.service.PartyService;
 import de.party.util.rest.NotFoundException;
 
@@ -20,6 +26,7 @@ import de.party.util.rest.NotFoundException;
 @Path("/party")
 @Produces(APPLICATION_JSON)
 @Consumes
+@Transactional
 @RequestScoped
 public class PartyResource {
 
@@ -32,6 +39,9 @@ public class PartyResource {
 	@Inject
 	private PartyService ps;
 	
+	@Inject
+	private NutzerService ns;
+		
 	@GET
 	@Path("{id:[1-9][0-9]*}")
 	public Response findPartyById(@PathParam("id") Long id) {
@@ -60,6 +70,28 @@ public class PartyResource {
 		
 	}
 	
+
+	/**
+	 * Teilnehmer an einer Party je nach Status {OFFEN, ZUSAGE, ABSAGE} auslesen
+	 * 
+	 * @param id
+	 * @return
+	 */
+	@GET
+	@Path("{id:[1-9][0-9]*}/teilnehmer/eingelden")
+	public Response findEingeladeneTeilnehmerByPartyId(@PathParam("id") Long id) {
+		final Party party = ps.findPartyById(id);
+		//TODO NotFoundException msg einbinden
+		if (party == null) {
+			throw new NotFoundException("");
+		}
+		//TODO hier weitermachen
+		List<Nutzer> teilnehmer = ns.findEingeladeneTeilnehmerByParty(party);
+		
+		
+		return Response.ok(teilnehmer).build();
+		
+	}
 	
 	
 	}

@@ -24,6 +24,7 @@ import javax.xml.bind.annotation.XmlTransient;
 
 
 
+
 import de.party.nutzer.domain.Nutzer;
 import static de.party.util.Constants.KEINE_ID;
 import static javax.persistence.TemporalType.TIMESTAMP;
@@ -43,8 +44,15 @@ import static javax.persistence.TemporalType.TIMESTAMP;
     				+ 	" FROM Party p"
     				+	" JOIN p.teilnehmer t"
     				+ 	" WHERE t.teilnehmer = :"+ Party.PARAM_TEILNEHMER
-    				+	" AND t.status = :" + Party.PARAM_STATUS)
-    				
+    				+	" AND t.status = :" + Party.PARAM_STATUS
+    				+	" AND CURRENT_TIMESTAMP < p.datum"),
+    @NamedQuery(name = Party.FIND_ZUGESAGTE_PARTIES_BY_NUTZER, query = 
+						"SELECT p"
+					+ 	" FROM Party p"
+					+	" JOIN p.teilnehmer t"
+					+ 	" WHERE t.teilnehmer = :"+ Party.PARAM_TEILNEHMER
+					+	" AND t.status = :" + Party.PARAM_STATUS
+					+	" AND CURRENT_TIMESTAMP < p.datum")
 })
 public class Party implements Serializable {
 
@@ -61,6 +69,8 @@ public class Party implements Serializable {
 	
 	public static final String FIND_PARTIES_BY_NUTZER = PREFIX + "findPartiesByNutzer";
 	public static final String FIND_OFFENE_EINLADUNGEN_BY_NUTZER = PREFIX + "findOffeneEinladungenByNutzer";
+
+	public static final String FIND_ZUGESAGTE_PARTIES_BY_NUTZER = PREFIX + "findZugesagtePartiesByNutzer";
 	
 	
 	@Id
