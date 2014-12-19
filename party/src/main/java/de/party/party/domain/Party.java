@@ -25,6 +25,7 @@ import javax.xml.bind.annotation.XmlTransient;
 
 
 import de.party.nutzer.domain.Nutzer;
+import de.party.item.domain.PartyItem;
 import static de.party.util.Constants.KEINE_ID;
 import static javax.persistence.TemporalType.TIMESTAMP;
 
@@ -89,6 +90,9 @@ public class Party implements Serializable {
 		
 	@OneToMany(mappedBy="party", cascade = CascadeType.ALL)
 	private List<PartyTeilnahme> teilnehmer;
+	
+	@OneToMany(mappedBy="party", cascade = CascadeType.ALL)
+	private List<PartyItem> partyitems;
 	
 //	@ManyToMany(mappedBy = "parties")
 //	private List<Nutzer> teilnehmer;
@@ -179,6 +183,15 @@ public class Party implements Serializable {
 	}
 	
 	
+	@XmlTransient
+	public List<PartyItem> getPartyitems() {
+		return partyitems;
+	}
+
+	public void setPartyitems(List<PartyItem> partyitems) {
+		this.partyitems = partyitems;
+	}
+
 	public void zusagen(Party party){
 		
 		

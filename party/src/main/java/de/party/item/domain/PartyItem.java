@@ -5,10 +5,15 @@ import static javax.persistence.TemporalType.TIMESTAMP;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.PrePersist;
@@ -17,6 +22,9 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
+
+import de.party.party.domain.Party;
+
 
 @Entity
 @Table
@@ -30,18 +38,25 @@ public class PartyItem implements Serializable {
 	@Column(nullable = false, updatable = false)
 	private Long id = KEINE_ID;
 	
-	@Column(nullable = false)
-	private Long party_id;
+	@OneToOne
+	@JoinColumn(name="party_id", updatable = false, insertable = false, referencedColumnName = "id")
+	private Party party;
+	
+	@OneToMany(mappedBy="partyItem", cascade = CascadeType.ALL)
+	private List<ItemMitbringer> mitbringer;
 	
 	@Column(nullable = false)
-	private Long item_id;
-	
-	@Column(nullable = true)
-	private String mitbringer;
+	private String beschreibung;
 	
 	@Column(nullable = false)
-	private boolean nochoffen;
+	private String picture_id;
 	
+	@Column
+	private int anzahl;
+	
+	@Column
+	private int noch_benötigt;
+
 	@Column(nullable = false)
 	@Temporal(TIMESTAMP)
 	private Date erzeugt;
@@ -55,10 +70,6 @@ public class PartyItem implements Serializable {
 		super();
 	}
 
-	public PartyItem(Long party_id, Long item_id, String mitbringer, boolean nochoffen) {
-		super();
-		set(party_id, item_id, mitbringer, nochoffen);
-	}
 	
 	@PrePersist
 	protected void prePerstist() {
@@ -69,85 +80,118 @@ public class PartyItem implements Serializable {
 	protected void preUpdate() {
 		aktualisiert = new Date();
 	}
-	
 
-	public boolean isNochoffen() {
-		return nochoffen;
-	}
-
-	public void setNochoffen(boolean nochoffen) {
-		this.nochoffen = nochoffen;
-	}
 
 	public Long getId() {
 		return id;
 	}
 
+
 	public void setId(Long id) {
 		this.id = id;
 	}
 
-	public Long getParty_id() {
-		return party_id;
+
+	public Party getParty() {
+		return party;
 	}
 
-	public void setParty_id(Long party_id) {
-		this.party_id = party_id;
+
+	public void setParty(Party party) {
+		this.party = party;
 	}
 
-	public Long getItem_id() {
-		return item_id;
-	}
 
-	public void setItem_id(Long item_id) {
-		this.item_id = item_id;
-	}
-
-	public String getMitbringer() {
+	public List<ItemMitbringer> getMitbringer() {
 		return mitbringer;
 	}
 
-	public void setMitbringer(String mitbringer) {
+
+	public void setMitbringer(List<ItemMitbringer> mitbringer) {
 		this.mitbringer = mitbringer;
 	}
-	
+
+
+	public String getBeschreibung() {
+		return beschreibung;
+	}
+
+
+	public void setBeschreibung(String beschreibung) {
+		this.beschreibung = beschreibung;
+	}
+
+
+	public String getPicture_id() {
+		return picture_id;
+	}
+
+
+	public void setPicture_id(String picture_id) {
+		this.picture_id = picture_id;
+	}
+
+
+	public int getAnzahl() {
+		return anzahl;
+	}
+
+
+	public void setAnzahl(int anzahl) {
+		this.anzahl = anzahl;
+	}
+
+
+	public int getNoch_benötigt() {
+		return noch_benötigt;
+	}
+
+
+	public void setNoch_benötigt(int noch_benötigt) {
+		this.noch_benötigt = noch_benötigt;
+	}
+
+
 	public Date getErzeugt() {
 		return erzeugt;
 	}
+
 
 	public void setErzeugt(Date erzeugt) {
 		this.erzeugt = erzeugt;
 	}
 
+
 	public Date getAktualisiert() {
 		return aktualisiert;
 	}
 
+
 	public void setAktualisiert(Date aktualisiert) {
 		this.aktualisiert = aktualisiert;
 	}
-	
-	
 
 
-	
-	
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result
 				+ ((aktualisiert == null) ? 0 : aktualisiert.hashCode());
+		result = prime * result + anzahl;
+		result = prime * result
+				+ ((beschreibung == null) ? 0 : beschreibung.hashCode());
 		result = prime * result + ((erzeugt == null) ? 0 : erzeugt.hashCode());
 		result = prime * result + ((id == null) ? 0 : id.hashCode());
-		result = prime * result + ((item_id == null) ? 0 : item_id.hashCode());
 		result = prime * result
 				+ ((mitbringer == null) ? 0 : mitbringer.hashCode());
-		result = prime * result + (nochoffen ? 1231 : 1237);
+		result = prime * result + noch_benötigt;
+		result = prime * result + ((party == null) ? 0 : party.hashCode());
 		result = prime * result
-				+ ((party_id == null) ? 0 : party_id.hashCode());
+				+ ((picture_id == null) ? 0 : picture_id.hashCode());
 		return result;
 	}
+
 
 	@Override
 	public boolean equals(Object obj) {
@@ -163,6 +207,13 @@ public class PartyItem implements Serializable {
 				return false;
 		} else if (!aktualisiert.equals(other.aktualisiert))
 			return false;
+		if (anzahl != other.anzahl)
+			return false;
+		if (beschreibung == null) {
+			if (other.beschreibung != null)
+				return false;
+		} else if (!beschreibung.equals(other.beschreibung))
+			return false;
 		if (erzeugt == null) {
 			if (other.erzeugt != null)
 				return false;
@@ -173,47 +224,35 @@ public class PartyItem implements Serializable {
 				return false;
 		} else if (!id.equals(other.id))
 			return false;
-		if (item_id == null) {
-			if (other.item_id != null)
-				return false;
-		} else if (!item_id.equals(other.item_id))
-			return false;
 		if (mitbringer == null) {
 			if (other.mitbringer != null)
 				return false;
 		} else if (!mitbringer.equals(other.mitbringer))
 			return false;
-		if (nochoffen != other.nochoffen)
+		if (noch_benötigt != other.noch_benötigt)
 			return false;
-		if (party_id == null) {
-			if (other.party_id != null)
+		if (party == null) {
+			if (other.party != null)
 				return false;
-		} else if (!party_id.equals(other.party_id))
+		} else if (!party.equals(other.party))
+			return false;
+		if (picture_id == null) {
+			if (other.picture_id != null)
+				return false;
+		} else if (!picture_id.equals(other.picture_id))
 			return false;
 		return true;
 	}
-	
-	
+
 
 	@Override
 	public String toString() {
-		return "PartyItem [id=" + id + ", party_id=" + party_id + ", item_id="
-				+ item_id + ", mitbringer=" + mitbringer + ", nochoffen="
-				+ nochoffen + ", erzeugt=" + erzeugt + ", aktualisiert="
-				+ aktualisiert + "]";
+		return "PartyItem [id=" + id + ", party=" + party + ", mitbringer="
+				+ mitbringer + ", beschreibung=" + beschreibung
+				+ ", picture_id=" + picture_id + ", anzahl=" + anzahl
+				+ ", noch_benötigt=" + noch_benötigt + ", erzeugt=" + erzeugt
+				+ ", aktualisiert=" + aktualisiert + "]";
 	}
 
-	public final void set(Long party_id, Long item_id, String mitbringer, boolean nochoffen) {
-		
-		setParty_id(party_id);
-		setItem_id(item_id);
-		setMitbringer(mitbringer);
-		setNochoffen(nochoffen);
-		
-		
-	}
-	
-	
-	
 
 }

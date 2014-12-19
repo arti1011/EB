@@ -35,6 +35,7 @@ import javax.xml.bind.annotation.XmlTransient;
 
 import de.party.party.domain.Party;
 import de.party.party.domain.PartyTeilnahme;
+import de.party.item.domain.ItemMitbringer;
 import static de.party.util.Constants.KEINE_ID;
 import static de.party.util.Constants.DEFAULT_PICTURE;
 
@@ -112,6 +113,9 @@ public class Nutzer implements Serializable {
 	
 	@OneToMany(mappedBy="teilnehmer", cascade = CascadeType.ALL)
 	private List<PartyTeilnahme> parties;
+	
+	@OneToMany(mappedBy="mitbringer", cascade = CascadeType.ALL)
+	private List<ItemMitbringer> mitbringer;
 	
 	
 	@Transient
@@ -332,7 +336,20 @@ public class Nutzer implements Serializable {
 		this.parties = parties;
 	}
 	
-		
+	
+	@XmlTransient	
+	public List<ItemMitbringer> getMitbringer() {
+		return mitbringer;
+	}
+
+
+
+	public void setMitbringer(List<ItemMitbringer> mitbringer) {
+		this.mitbringer = mitbringer;
+	}
+
+
+
 	public URI getPartyUri() {
 		return partyUri;
 	}

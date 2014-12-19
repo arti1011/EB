@@ -26,7 +26,6 @@ import javax.ws.rs.core.UriInfo;
 import org.jboss.logging.Logger;
 
 import de.party.item.service.ItemService;
-import de.party.item.domain.Item;
 import de.party.item.domain.PartyItem;
 import de.party.nutzer.domain.Nutzer;
 import de.party.nutzer.rest.NutzerResource;
@@ -37,7 +36,7 @@ import de.party.nutzer.rest.NutzerResource;
 
 
 
-@Path("/item")
+@Path("/partyitem")
 @Produces(APPLICATION_JSON)
 @Consumes
 @RequestScoped
@@ -55,7 +54,7 @@ public class ItemResource {
 	@GET
 	public Response findAllItems() {
 		
-		List<Item> items;
+		List<PartyItem> items;
 		
 		items = is.findAllItems();
 		
@@ -71,7 +70,7 @@ public class ItemResource {
 	@Consumes(APPLICATION_JSON)
 	@Produces({APPLICATION_JSON, APPLICATION_XML})
 	@Transactional
-	public Response addItem(Item item) {
+	public Response addItem(PartyItem item) {
 		
 		
 		item = is.addItem(item);
