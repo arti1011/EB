@@ -8,11 +8,9 @@ import static javax.persistence.CascadeType.PERSIST;
 
 import java.io.Serializable;
 import java.net.URI;
-import java.util.Collections;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
+
 
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
@@ -20,7 +18,6 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
@@ -37,6 +34,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
 import de.party.party.domain.Party;
+import de.party.party.domain.PartyTeilnahme;
 import static de.party.util.Constants.KEINE_ID;
 import static de.party.util.Constants.DEFAULT_PICTURE;
 
@@ -58,10 +56,14 @@ import static de.party.util.Constants.DEFAULT_PICTURE;
 						query = "SELECT n"
 									+ " FROM Nutzer n"
 									+ " WHERE UPPER (n.nachname) LIKE :" + Nutzer.NACHNAME_QUERY_PARAM),
-//	@NamedQuery(name = Nutzer.FIND_FRIENDS_BY_ID,
-//						query = "SELECT DISTINCT n"
-//								+ " FROM Nutzer n  LEFT JOIN FETCH n.myFriends"
-//								+ " WHERE n.id = :" + Nutzer.ID_QUERY_PARAM)		
+	@NamedQuery(name = Nutzer.FIND_FRIENDS_BY_ID,
+						query = "SELECT DISTINCT n"
+								+ " FROM Nutzer n  LEFT JOIN FETCH n.myFriends"
+								+ " WHERE n.id = :" + Nutzer.ID_QUERY_PARAM),
+//	@NamedQuery(name = Nutzer.FIND_FRIENDS_BY_NUTZER, 
+//						query = "SELECT n"
+//								+ " FROM Nutzer n LEFT JOIN FETCH n.myFriends"
+//								+ " WHERE n.id =:" + Nutzer.ID_QUERY_PARAM) 
 })
 @XmlRootElement
 public class Nutzer implements Serializable {
@@ -78,6 +80,7 @@ public class Nutzer implements Serializable {
 	public final static String FIND_FRIENDS_BY_ID = "findFriendsById";
 	public final static String ID_QUERY_PARAM = "id";
 	
+	public final static String FIND_FRIENDS_BY_NUTZER = "findFriendsByNutzer";
 		
 		
 	@Id
@@ -93,14 +96,28 @@ public class Nutzer implements Serializable {
 
 	// Freunde Relation
 	@OneToMany(mappedBy = "owner", cascade = CascadeType.ALL)
-	private Set<Freundschaft> myFriends = new HashSet<>();
+	private List<Freundschaft> myFriends;
 	
-	// Ist Veranstalter
-	@OneToMany
-	@JoinColumn(name="veranstalter", nullable = false)
-	@XmlTransient
+	@Transient
+	private URI friendsUri;
+	
+//	@ManyToMany
+//	@JoinTable(name="PARTY_NUTZER",
+//				joinColumns={@JoinColumn(name="NUTZER_ID", referencedColumnName="ID")},
+//				inverseJoinColumns={@JoinColumn(name="PARTY_ID", referencedColumnName="ID")})
+//	private List<Party> parties;
+	
+	@OneToMany(mappedBy="veranstalter")
 	private List<Party> veranstalter;
 	
+	@OneToMany(mappedBy="teilnehmer", cascade = CascadeType.ALL)
+	private List<PartyTeilnahme> parties;
+	
+	
+	@Transient
+	private URI partyUri;
+	
+		
 	@Column(nullable = false)
 	@NotNull(message = "{nutzerverwaltung.email.notNull")
 	@Pattern(regexp="[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\."
@@ -179,30 +196,12 @@ public class Nutzer implements Serializable {
 		return id;
 	}
 	
-	@XmlTransient
-	public List<Party> getVeranstalter() {
-		if (veranstalter == null) {
-			return null;
-		}
-		return Collections.unmodifiableList(veranstalter);
-	}
-
-	public void setVeranstalter(List<Party> veranstalter) {
 		
-		if (this.veranstalter == null) {
-			this.veranstalter = veranstalter;
-			return;
-		}
-		
-		// Wiederverwendung der vorhandenen Collection
-		this.veranstalter.clear();
-		if (veranstalter != null) {
-			this.veranstalter.addAll(veranstalter);
-		}
-		
-	}
 
 	
+	
+
+
 	public Adresse getAdresse() {
 		return adresse;
 	}
@@ -224,14 +223,13 @@ public class Nutzer implements Serializable {
 	
 	
 	@XmlTransient
-	public Set<Freundschaft> getMyFriends() {
+	public List<Freundschaft> getMyFriends() {
 		return myFriends;
 	}
 
-	@Transient
-	private URI friendsUri;
 	
-	public void setMyFriends(Set<Freundschaft> myFriends) {
+	
+	public void setMyFriends(List<Freundschaft> myFriends) {
 		this.myFriends = myFriends;
 	}
 
@@ -291,6 +289,75 @@ public class Nutzer implements Serializable {
 	public void setFriendsUri(URI friendsUri) {
 		this.friendsUri = friendsUri;
 	}
+	
+	
+	
+//	@XmlTransient
+//	public List<Party> getParties() {
+//		if (parties == null) {
+//			return null;
+//		}
+//		return Collections.unmodifiableList(parties);
+//	}
+//
+//
+//
+//	public void setParties(List<Party> parties) {
+//		
+//		if (this.parties == null) {
+//			this.parties = parties;
+//			return;
+//		}
+//		this.parties.clear();
+//		if (parties != null) {
+//			this.parties.addAll(parties);
+//		}
+//	}
+//
+//	public Nutzer setParty(Party party) {
+//		if (parties == null) {
+//			parties = new ArrayList<>();
+//		}
+//		parties.add(party);
+//		return this;
+//	}
+	@XmlTransient
+	public List<PartyTeilnahme> getParties() {
+		return parties;
+	}
+
+
+
+	public void setParties(List<PartyTeilnahme> parties) {
+		this.parties = parties;
+	}
+	
+		
+	public URI getPartyUri() {
+		return partyUri;
+	}
+
+	
+
+
+
+	public void setPartyUri(URI partyUri) {
+		this.partyUri = partyUri;
+	}
+	
+
+	@XmlTransient
+	public List<Party> getVeranstalter() {
+		return veranstalter;
+	}
+
+
+
+	public void setVeranstalter(List<Party> veranstalter) {
+		this.veranstalter = veranstalter;
+	}
+
+
 
 	@Override
 	public int hashCode() {

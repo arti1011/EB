@@ -3,6 +3,7 @@ package de.party.nutzer.domain;
 import java.io.Serializable;
 import java.util.Date;
 
+
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -14,6 +15,7 @@ import javax.persistence.PrePersist;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.xml.bind.annotation.XmlTransient;
+
 
 import static javax.persistence.TemporalType.TIMESTAMP;
 import static de.party.util.Constants.KEINE_ID;
@@ -40,6 +42,7 @@ public class Adresse implements Serializable {
 	
 	@Column
 	private String ort;
+	
 	
 	@Basic(optional = false)
 	@Temporal(TIMESTAMP)

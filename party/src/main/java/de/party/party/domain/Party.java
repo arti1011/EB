@@ -1,29 +1,67 @@
 package de.party.party.domain;
 
 import java.io.Serializable;
+import java.net.URI;
 import java.util.Date;
+import java.util.List;
 
+import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
+import javax.persistence.Transient;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
+
+
 
 import de.party.nutzer.domain.Nutzer;
 import static de.party.util.Constants.KEINE_ID;
-import static javax.persistence.TemporalType.DATE;
+import static javax.persistence.TemporalType.TIMESTAMP;
+
 
 @Entity
 @Table
 @XmlRootElement
+@NamedQueries({
+	@NamedQuery(name = Party.FIND_PARTIES_BY_NUTZER, query = 
+						"SELECT p"
+					   + " FROM Party p"
+					   + " WHERE p.veranstalter = :"
+					   + Party.PARAM_NUTZER),
+    @NamedQuery(name = Party.FIND_OFFENE_EINLADUNGEN_BY_NUTZER, query = 
+    					"SELECT p"
+    				+ 	" FROM Party p"
+    				+	" JOIN p.teilnehmer t"
+    				+ 	" WHERE t.teilnehmer = :"+ Party.PARAM_TEILNEHMER
+    				+	" AND t.status = :" + Party.PARAM_STATUS)
+    				
+})
 public class Party implements Serializable {
 
 	private static final long serialVersionUID = -5326769944603732896L;
+	
+	// Queries
+	//+	" AND t.status = :" + Party.PARAM_STATUS)
+	public static final String PREFIX = "Party.";
+	
+	public static final String PARAM_NUTZER = "nutzer";
+	
+	public static final String PARAM_TEILNEHMER = "teilnehmer";
+	public static final String PARAM_STATUS = "status";
+	
+	public static final String FIND_PARTIES_BY_NUTZER = PREFIX + "findPartiesByNutzer";
+	public static final String FIND_OFFENE_EINLADUNGEN_BY_NUTZER = PREFIX + "findOffeneEinladungenByNutzer";
+	
 	
 	@Id
 	@GeneratedValue
@@ -36,14 +74,29 @@ public class Party implements Serializable {
 	@Column
 	private String beschreibung;
 	
-	@Column
-	@Temporal(DATE)
+	@Basic(optional = false)
+	@Temporal(TIMESTAMP)
 	private Date datum;
 	
-	@ManyToOne(optional = false)
-	@JoinColumn(name="veranstalter", nullable = false, insertable = false, updatable = false)
+	@Column
+	private String uhrzeit;
+	
+		
+	@OneToOne
+	@JoinColumn(name = "veranstalter", nullable = false)
 	private Nutzer veranstalter;
 	
+		
+	@OneToMany(mappedBy="party", cascade = CascadeType.ALL)
+	private List<PartyTeilnahme> teilnehmer;
+	
+//	@ManyToMany(mappedBy = "parties")
+//	private List<Nutzer> teilnehmer;
+	
+	@Transient
+	private URI teilnehmerUri;
+	
+		
 	public Party() {
 		super();
 	}
@@ -79,7 +132,17 @@ public class Party implements Serializable {
 	public void setDatum(Date datum) {
 		this.datum = datum;
 	}
+	
+	public String getUhrzeit() {
+		return uhrzeit;
+			
+	}
+	public void setUhrzeit(String uhrzeit) {
+		this.uhrzeit = uhrzeit;
+	}
 
+	
+	
 	public Nutzer getVeranstalter() {
 		return veranstalter;
 	}
@@ -87,8 +150,39 @@ public class Party implements Serializable {
 	public void setVeranstalter(Nutzer veranstalter) {
 		this.veranstalter = veranstalter;
 	}
+
+	
+//	@XmlTransient
+//	public List<Nutzer> getTeilnehmer() {
+//		return teilnehmer;
+//	}
+//
+//	public void setTeilnehmer(List<Nutzer> teilnehmer) {
+//		this.teilnehmer = teilnehmer;
+//	}
+
+	public URI getTeilnehmerUri() {
+		return teilnehmerUri;
+	}
+
+	public void setTeilnehmerUri(URI teilnehmerUri) {
+		this.teilnehmerUri = teilnehmerUri;
+	}
+
+	@XmlTransient
+	public List<PartyTeilnahme> getTeilnehmer() {
+		return teilnehmer;
+	}
+
+	public void setTeilnehmer(List<PartyTeilnahme> teilnehmer) {
+		this.teilnehmer = teilnehmer;
+	}
 	
 	
+	public void zusagen(Party party){
+		
+		
+	}
 	
 	
 

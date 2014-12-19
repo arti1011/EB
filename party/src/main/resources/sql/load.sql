@@ -37,3 +37,17 @@ INSERT INTO FREUNDSCHAFT (OWNER_ID, FRIEND_ID) VALUES ('1', '2')
 INSERT INTO FREUNDSCHAFT (OWNER_ID, FRIEND_ID) VALUES ('1', '3')
 INSERT INTO FREUNDSCHAFT (OWNER_ID, FRIEND_ID) VALUES ('2', '4')
 INSERT INTO FREUNDSCHAFT (OWNER_ID, FRIEND_ID) VALUES ('2', '3')
+
+-- PARTY
+--
+-- Attribute:
+--  id beschreibung datum titel uhrzeit adresse_fk veranstalter_fk
+--
+INSERT INTO PARTY(ID, BESCHREIBUNG, DATUM, TITEL, UHRZEIT, VERANSTALTER) VALUES('1','WG-Party zu Halloween','30.10.2014 08:00:00','Halloween-Party','20:00','1');
+
+-- PARTYTEILNAHME
+--
+-- Attribute:
+-- id istveranstalter status party_id teilnehmer_id
+--
+INSERT INTO PARTYTEILNAHME(ID, STATUS, PARTY_ID, TEILNEHMER_ID) VALUES ('1','OFFEN','1','2');

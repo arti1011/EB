@@ -2,6 +2,7 @@ package de.party.nutzer.rest;
 
 import java.util.List;
 import java.util.NoSuchElementException;
+
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
@@ -9,6 +10,7 @@ import javax.validation.Valid;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -17,6 +19,15 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
+
+
+
+
+
+
+
+
+
 
 
 
@@ -38,6 +49,11 @@ import static javax.ws.rs.core.MediaType.TEXT_PLAIN;
 import de.party.nutzer.domain.Nutzer;
 import de.party.nutzer.domain.ProfilePicture;
 import de.party.nutzer.service.NutzerService;
+import de.party.party.domain.Party;
+import de.party.party.domain.PartyTeilnahme;
+import de.party.party.domain.StatusType;
+import de.party.party.rest.UriHelperParty;
+import de.party.party.service.PartyService;
 import de.party.util.rest.NotFoundException;
 
 
@@ -60,8 +76,14 @@ public class NutzerResource {
 	@Inject
 	private UriHelperNutzer uriHelperNutzer;
 	
+	@Inject
+	private UriHelperParty uriHelperParty;
+	
 	@Inject 
 	private NutzerService ns;
+	
+	@Inject
+	private PartyService ps;
 	
 		
 	@GET
@@ -162,7 +184,8 @@ public class NutzerResource {
 			throw new NoSuchElementException();
 		}
 		
-		
+		// URLs innerhalb der gefundenen Nutzer anpassen
+		uriHelperNutzer.updateUriNutzer(nutzer, uriInfo);
 		return Response.ok(nutzer).build();
 	}
 	
@@ -198,11 +221,37 @@ public class NutzerResource {
 		final List<Nutzer> friends = ns.findFriendsById(id);
 			
 		
-		
+		for (Nutzer nutzer : friends) {
+			uriHelperNutzer.updateUriNutzer(nutzer, uriInfo);
+		}
 		return Response.ok(friends).build();
 	}
 	
-
+	/**
+	 * 
+	 * 
+	 * @param nutzer_id
+	 * @return List<URI> Nutzer ==> Freunde
+	 */
+	@GET
+	@Path("{id:[1-9][0-9]*}/friends/")
+	public Response findFriendsByNutzerId(@PathParam("id") Long nutzer_id) {
+		final Nutzer nutzer = ns.findNutzerById(nutzer_id);
+		if (nutzer == null) {
+			return null;
+		}
+		
+		final List<Nutzer> freunde = ns.findFriendsByNutzer(nutzer);
+//		final List<Freundschaft> myFriendsRelation = ns.findFriendsByNutzer(nutzer);
+		
+		// URL für die Freunde der Freunde..
+		for (Nutzer freund : freunde) {
+			uriHelperNutzer.updateUriNutzer(freund, uriInfo);
+			
+		}
+		
+		return Response.ok(freunde).build();
+	}
 	
 	@POST
 	@Path("/friend/{id:[1-9][0-9]*}")
@@ -267,6 +316,59 @@ public class NutzerResource {
 				
 		
 	}
+	
+	@GET
+	@Path("{id:[1-9][0-9]*}/parties")
+	public Response findPartiesByNutzerId(@PathParam("id") Long nutzerId) {
+		final Nutzer nutzer = ns.findNutzerById(nutzerId);
+		
+		final List<Party> parties = ps.findPartiesByNutzer(nutzer);
+		
+		// URLs anpassen wenn der Nutzer Veranstalter einer Party ist
+		
+			for (Party party : parties) {
+				
+				uriHelperParty.updateUriParty(party, uriInfo);
+				}
+			
+			
+		
+		
+		
+		return Response.ok(parties).build();
+	}
+	
+	@GET
+	@Path("{id:[1-9][0-9]*}/offeneEinladungen")
+	public Response findOffeneEinladungenByNutzerId(@PathParam("id") Long nutzerId) {
+		final Nutzer nutzer = ns.findNutzerById(nutzerId);
+		final List<Party> parties = ps.findOffeneEinladungenByNutzer(nutzer);
+		
+		return Response.ok(parties).build();
+		
+	}
+	
+//	//TODO Nochmal grundlegend überdenken...das macht so wohl relativ wenig Sinn
+//	@PUT
+//	@Path("{id:[1-9][0-9]*}/offeneEinladungen/zusagen")
+//	@Consumes(APPLICATION_JSON)
+//	@Produces
+//	public Response zurPartyZusagen(@PathParam("id") Long nutzerId, Party party) {
+//		
+//		final Nutzer nutzer = ns.findNutzerById(nutzerId);
+//				
+//		//Index des Nutzer-Objekts aus der PartyTeilnehmerListe filtern und anschließend Objekt holen
+//		final List<PartyTeilnahme> partyTeilnahmeListe = party.getTeilnehmer();
+//		final int index = partyTeilnahmeListe.indexOf(nutzer);
+//		final PartyTeilnahme originalPartyTeilnahme = partyTeilnahmeListe.get(index);
+//		
+//		originalPartyTeilnahme.setStatus(StatusType.ZUSAGE);
+//		
+//		
+//		
+//		return Response.noContent().build();
+//	}
+	
 	
 	
 }
