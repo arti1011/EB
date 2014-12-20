@@ -12,6 +12,7 @@ import java.util.Date;
 import java.util.List;
 
 
+
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -61,6 +62,12 @@ import static de.party.util.Constants.DEFAULT_PICTURE;
 						query = "SELECT DISTINCT n"
 								+ " FROM Nutzer n  LEFT JOIN FETCH n.myFriends"
 								+ " WHERE n.id = :" + Nutzer.ID_QUERY_PARAM),
+	@NamedQuery(name = Nutzer.FIND_EINGELADENE_TEILNEHMER_BY_PARTY, 
+					   query = "SELECT n"
+					   			+	" FROM Nutzer n"
+							    +	" JOIN n.parties p"
+					   			+	" WHERE n.parties =:" + Nutzer.PARAM_PARTY)
+//					   			+ 	" AND p.status =:" + Nutzer.PARAM_TEILNAHME_STATUS)
 //	@NamedQuery(name = Nutzer.FIND_FRIENDS_BY_NUTZER, 
 //						query = "SELECT n"
 //								+ " FROM Nutzer n LEFT JOIN FETCH n.myFriends"
@@ -70,18 +77,27 @@ import static de.party.util.Constants.DEFAULT_PICTURE;
 public class Nutzer implements Serializable {
 	private static final long serialVersionUID = 4618817696314640065L;
 	
-	// Konstanten für Queries
+	// Query Parameter
+	public final static String ID_QUERY_PARAM = "id";
 	public final static String EMAIL_QUERY_PARAM  = "email";
-	public final static String FIND_NUTZER_BY_EMAIL = "findNutzerByEmail";
+	public final static String NACHNAME_QUERY_PARAM = "nachname";
+	public static final String PARAM_PARTY = "party";
+	public static final String PARAM_TEILNAHME_STATUS = "status";
 	
+	//Query Strings
+	//Nutzer
+	public final static String FIND_NUTZER_BY_EMAIL = "findNutzerByEmail";
 	public final static String FIND_NUTZER_BY_NACHNAME = "findNutzerByNachname";
 	public final static String FIND_NUTZER_BY_NACHNAME_PREFIX = "findNutzerByNachnamePrefix";
-	public final static String NACHNAME_QUERY_PARAM = "nachname";
 	
+	//Friends
 	public final static String FIND_FRIENDS_BY_ID = "findFriendsById";
-	public final static String ID_QUERY_PARAM = "id";
-	
 	public final static String FIND_FRIENDS_BY_NUTZER = "findFriendsByNutzer";
+	
+	//Party
+	public static final String FIND_EINGELADENE_TEILNEHMER_BY_PARTY = "findEingeladeneTeilnehmerByParty";
+
+	
 		
 		
 	@Id

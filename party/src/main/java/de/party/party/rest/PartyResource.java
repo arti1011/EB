@@ -78,7 +78,7 @@ public class PartyResource {
 	 * @return
 	 */
 	@GET
-	@Path("{id:[1-9][0-9]*}/teilnehmer/eingelden")
+	@Path("{id:[1-9][0-9]*}/teilnehmer/eingeladen")
 	public Response findEingeladeneTeilnehmerByPartyId(@PathParam("id") Long id) {
 		final Party party = ps.findPartyById(id);
 		//TODO NotFoundException msg einbinden
@@ -86,7 +86,7 @@ public class PartyResource {
 			throw new NotFoundException("");
 		}
 		//TODO hier weitermachen
-		List<Nutzer> teilnehmer = ns.findEingeladeneTeilnehmerByParty(party);
+		final List<Nutzer> teilnehmer = ns.findEingeladeneTeilnehmerByParty(party);
 		
 		
 		return Response.ok(teilnehmer).build();
