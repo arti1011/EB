@@ -39,8 +39,7 @@ public class NutzerService {
 		nutzer.setErzeugt(new Date());
 		nutzer.setPicture_id(DEFAULT_PICTURE);
 		
-		//TODO mail exception werfen
-		
+				
 		em.persist(nutzer);
 		
 		return nutzer;
@@ -245,15 +244,9 @@ public class NutzerService {
 		
 	}
 
-	//TODO 
+	
 	public List<Nutzer> findEingeladeneTeilnehmerByParty(Party party) {
-//		final List<PartyTeilnahme> partyTeilnahmeListe = em.createNamedQuery(PartyTeilnahme.FIND_PARTY_TEILNAHME_EINGELADEN, PartyTeilnahme.class)
-//													 		.setParameter(PartyTeilnahme.PARAM_PARTY, party)
-//													 		.getResultList();
-//		
-//		if (partyTeilnahmeListe == null || partyTeilnahmeListe.isEmpty()) {
-//			return Collections.emptyList();
-//		}
+
 		
 		final List<Nutzer> teilnehmer = em.createNamedQuery(Nutzer.FIND_EINGELADENE_TEILNEHMER_BY_PARTY, Nutzer.class)
 																  .setParameter(Nutzer.PARAM_PARTY, party)
@@ -269,6 +262,32 @@ public class NutzerService {
 													 
 	}
 
+
+	public List<Nutzer> findZugesagteTeilnehmerByParty(Party party) {
+		
+		final List<Nutzer> teilnehmer = em.createNamedQuery(Nutzer.FIND_EINGELADENE_TEILNEHMER_BY_PARTY, Nutzer.class)
+																  .setParameter(Nutzer.PARAM_PARTY, party)
+																  .setParameter(Nutzer.PARAM_TEILNAHME_STATUS, StatusType.ZUSAGE)
+																  .getResultList();
+		if (teilnehmer == null || teilnehmer.isEmpty()) {
+			return Collections.emptyList();
+		}
+		
+		return teilnehmer;
+	}
+
+	public List<Nutzer> findAbgesagteTeilnehmerByParty(Party party) {
+		
+		final List<Nutzer> teilnehmer = em.createNamedQuery(Nutzer.FIND_EINGELADENE_TEILNEHMER_BY_PARTY, Nutzer.class)
+																  .setParameter(Nutzer.PARAM_PARTY, party)
+																  .setParameter(Nutzer.PARAM_TEILNAHME_STATUS, StatusType.ABSAGE)
+																  .getResultList();
+		if (teilnehmer == null || teilnehmer.isEmpty()) {
+			return Collections.emptyList();
+		}
+		
+		return teilnehmer;
+	}
 
 	
 	

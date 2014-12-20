@@ -39,6 +39,7 @@ import javax.ws.rs.core.UriInfo;
 
 
 
+
 import org.jboss.logging.Logger;
 
 import com.google.common.base.Strings;
@@ -70,6 +71,8 @@ public class NutzerResource {
 	// Exception Message Keys
 	private static final String NOT_FOUND_MAIL  = "nutzer.notFound.email";
 	private static final String NOT_FOUND_NACHNAME = "nutzer.notFound.nachname";
+
+	private static final String NOT_FOUND_USER = "nutzer.notFound";
 	
 	@Context
 	private UriInfo uriInfo;
@@ -77,9 +80,7 @@ public class NutzerResource {
 	@Inject
 	private UriHelperNutzer uriHelperNutzer;
 	
-	@Inject
-	private UriHelperParty uriHelperParty;
-	
+		
 	@Inject 
 	private NutzerService ns;
 	
@@ -190,22 +191,6 @@ public class NutzerResource {
 		return Response.ok(nutzer).build();
 	}
 	
-	
-//	@POST
-//	@Path("/friend")
-//	@Consumes(APPLICATION_JSON)
-//	@Transactional
-//	public Response addFriend(@QueryParam("requester_id") String requester_id,  
-//								@QueryParam("friend_id") String friend_id) {
-//		
-//		Nutzer friend = ns.addFriend(requester_id, friend_id);
-//		
-//		if (friend == null) {
-//			//TODO Excpetion werfen..
-//		}
-//						
-//		return Response.ok(friend).build();
-//	}
 	
 	/**
 	 * Freunde anhand der eigenen ID finden
@@ -323,22 +308,24 @@ public class NutzerResource {
 		
 	}
 	
+	/**
+	 * Parties auslesen die der User mit der übergebenen ID veranstatelt und veranstaltet hat
+	 * 
+	 * @param nutzerId
+	 * @return
+	 */
 	@GET
-	@Path("{id:[1-9][0-9]*}/parties")
+	@Path("{id:[1-9][0-9]*}/meinePartyVeranstaltungen")
 	public Response findPartiesByNutzerId(@PathParam("id") Long nutzerId) {
 		final Nutzer nutzer = ns.findNutzerById(nutzerId);
 		
+		if (nutzer == null) {
+			throw new NotFoundException(NOT_FOUND_USER, nutzerId);
+		}
+		
 		final List<Party> parties = ps.findPartiesByNutzer(nutzer);
 		
-		// URLs anpassen wenn der Nutzer Veranstalter einer Party ist
-		
-			for (Party party : parties) {
 				
-				uriHelperParty.updateUriParty(party, uriInfo);
-				}
-			
-			
-		
 		
 		
 		return Response.ok(parties).build();

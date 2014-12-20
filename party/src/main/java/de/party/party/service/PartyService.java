@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.ws.rs.BadRequestException;
 
 import de.party.nutzer.domain.Nutzer;
 import de.party.party.domain.Party;
@@ -83,6 +84,26 @@ public class PartyService {
 		partyTeilnahme.setStatus(StatusType.ABSAGE);
 
 		em.merge(partyTeilnahme);
+		
+	}
+
+	public Party createParty(Party party) {
+		
+		if (party == null) {
+			return party;
+		}
+		
+		
+		//Prüfen ob ein Veranstalter eingetragen ist und dieser auch in der DB existiert
+		final Nutzer veranstalter = em.find(Nutzer.class, party.getVeranstalter().getId());
+		
+		if (veranstalter == null) {
+			throw new BadRequestException("Veranstalter nicht in der DB gefunden");
+		}
+		
+		em.persist(party);
+		
+		return party;
 		
 	}
 

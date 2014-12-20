@@ -1,12 +1,15 @@
 package de.party.party.rest;
 
+import java.net.URI;
 import java.util.List;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
+import javax.validation.Valid;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -14,13 +17,14 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
+
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import de.party.nutzer.domain.Nutzer;
 import de.party.nutzer.service.NutzerService;
 import de.party.party.domain.Party;
-import de.party.party.domain.PartyTeilnahme;
 import de.party.party.service.PartyService;
 import de.party.util.rest.NotFoundException;
+import static de.party.util.Constants.KEINE_ID;
 
 
 @Path("/party")
@@ -30,6 +34,12 @@ import de.party.util.rest.NotFoundException;
 @RequestScoped
 public class PartyResource {
 
+	
+	
+	//Konstanten für Exceptions
+	private static final String NOT_FOUND_PARTY = "party.notFound";
+	
+	
 	@Inject
 	private UriHelperParty uriHelperParty;
 	
@@ -41,15 +51,23 @@ public class PartyResource {
 	
 	@Inject
 	private NutzerService ns;
-		
+	
+	/**
+	 * Party anhand einer ID suchen
+	 * 
+	 * @param id
+	 * @return Party
+	 * 
+	 * @throws NotFoundException
+	 */
 	@GET
 	@Path("{id:[1-9][0-9]*}")
 	public Response findPartyById(@PathParam("id") Long id) {
 		final Party party = ps.findPartyById(id);
 		
-		//TODO key in messages einbinden
+		
 		if (party == null) {
-			throw new NotFoundException("Keine Party mit der ID " + id + " gefunden.");
+			throw new NotFoundException(NOT_FOUND_PARTY, id);
 		}
 		
 		uriHelperParty.updateUriParty(party, uriInfo);
@@ -75,17 +93,19 @@ public class PartyResource {
 	 * Teilnehmer an einer Party je nach Status {OFFEN, ZUSAGE, ABSAGE} auslesen
 	 * 
 	 * @param id
-	 * @return
+	 * @return List<{@link Nutzer}>
+	 * 
+	 * @throws NotFoundException
 	 */
 	@GET
 	@Path("{id:[1-9][0-9]*}/teilnehmer/eingeladen")
 	public Response findEingeladeneTeilnehmerByPartyId(@PathParam("id") Long id) {
 		final Party party = ps.findPartyById(id);
-		//TODO NotFoundException msg einbinden
+		
 		if (party == null) {
-			throw new NotFoundException("");
+			throw new NotFoundException(NOT_FOUND_PARTY, id);
 		}
-		//TODO hier weitermachen
+		
 		final List<Nutzer> teilnehmer = ns.findEingeladeneTeilnehmerByParty(party);
 		
 		
@@ -93,5 +113,82 @@ public class PartyResource {
 		
 	}
 	
+	/**
+	 * Alle Teilnehmer auslesen die zu einer Party zugesagt haben
+	 * 
+	 * @param id
+	 * @return List<{@link Nutzer}>
+	 * 
+	 * @throws NotFoundException
+	 */
+	@GET
+	@Path("{id:[1-9][0-9]*}/teilnehmer/zugesagt")
+	public Response findZugesagteTeilnehmerByPartyId(@PathParam("id") Long id) {
+		final Party party = ps.findPartyById(id);
+	
+		if (party == null) {
+			throw new NotFoundException(NOT_FOUND_PARTY, id);
+		}
+		
+		final List<Nutzer> teilnehmer = ns.findZugesagteTeilnehmerByParty(party);
+		
+		
+		return Response.ok(teilnehmer).build();
+		
+	}
+	
+	/**
+	 * Alle Teilnehmer auslesen die zu einer Party abgesagt haben
+	 * 
+	 * @param id
+	 * @return List<{@link Nutzer}>
+	 * 
+	 * @throws NotFoundException
+	 */
+	@GET
+	@Path("{id:[1-9][0-9]*}/teilnehmer/abgesagt")
+	public Response findAbgesagteTeilnehmerByPartyId(@PathParam("id") Long id) {
+		final Party party = ps.findPartyById(id);
+		
+		if (party == null) {
+			throw new NotFoundException("");
+		}
+		
+		final List<Nutzer> teilnehmer = ns.findAbgesagteTeilnehmerByParty(party);
+		
+		
+		return Response.ok(teilnehmer).build();
+		
+	}
+	
+	/**
+	 * Eine neue Party erstellen
+	 * 
+	 * Constraints: Veranstalter-ID notNull, Datum in der Zukunft
+	 * 
+	 * Sonst. Prüfungen: Check ob Veranstalter auch existiert
+	 * 
+	 * 
+	 * @param party
+	 * @return Response.created(HTTP: 201), URI zum neuen Datensatz im Response Header
+	 * 
+	 * @throws BadRequestException
+	 */
+	@POST
+	@Consumes(APPLICATION_JSON)
+	@Produces
+	public Response createParty(@Valid Party party) {
+		
+		party.setId(KEINE_ID);
+		
+				
+		party = ps.createParty(party);
+		
+		
+		final URI partyUri = uriHelperParty.getUriParty(party, uriInfo);
+		
+		return Response.created(partyUri).build();
+		
+	}
 	
 	}

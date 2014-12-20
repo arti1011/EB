@@ -19,8 +19,12 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.Transient;
+import javax.validation.constraints.Future;
+import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
+
+
 
 
 
@@ -87,6 +91,7 @@ public class Party implements Serializable {
 	
 	@Basic(optional = false)
 	@Temporal(TIMESTAMP)
+	@Future(message = "{party.datum.future}")
 	private Date datum;
 	
 	@Column
@@ -95,6 +100,7 @@ public class Party implements Serializable {
 		
 	@OneToOne
 	@JoinColumn(name = "veranstalter", nullable = false)
+	@NotNull(message = "{party.veranstalter.notNull}")
 	private Nutzer veranstalter;
 	
 		
@@ -107,9 +113,7 @@ public class Party implements Serializable {
 //	@ManyToMany(mappedBy = "parties")
 //	private List<Nutzer> teilnehmer;
 	
-	@Transient
-	private URI teilnehmerUri;
-	
+		
 		
 	public Party() {
 		super();
@@ -174,14 +178,6 @@ public class Party implements Serializable {
 //	public void setTeilnehmer(List<Nutzer> teilnehmer) {
 //		this.teilnehmer = teilnehmer;
 //	}
-
-	public URI getTeilnehmerUri() {
-		return teilnehmerUri;
-	}
-
-	public void setTeilnehmerUri(URI teilnehmerUri) {
-		this.teilnehmerUri = teilnehmerUri;
-	}
 
 	@XmlTransient
 	public List<PartyTeilnahme> getTeilnehmer() {

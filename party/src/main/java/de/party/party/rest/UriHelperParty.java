@@ -18,32 +18,14 @@ public class UriHelperParty {
 	@Inject
 	private UriHelperNutzer uriHelperNutzer;
 	
+	//TODO 
 	public void updateUriParty(Party party, UriInfo uriInfo) {
-		// URL für Veranstalter setzen
-		final Nutzer veranstalter = party.getVeranstalter();
-		
-		
-		
-//		if (veranstalter != null) {
-//			final URI veranstalterUri = uriHelperNutzer
-//									.getUriNutzer(party.getVeranstalter(), uriInfo);
-//			
-//			party.setVeranstalterUri(veranstalterUri);
-//			
-//		}
-		
-		}
-//		// TODO URLs für Teilnehmer
-//		final List<Nutzer> teilnehmer = party.getTeilnehmer();
-//		if (teilnehmer != null && !teilnehmer.isEmpty()) {
-//			for (Nutzer nutzer : teilnehmer) {
-//				final URI nutzerUri = uriHelperNutzer.
-//							getUriNutzer(nutzer, uriInfo);
-//				party.setNutzerUri(nutzerUri);
-//							
-//			}
-//		}
-	
+//		final UriBuilder ub = uriInfo.getBaseUriBuilder()
+//									 .path(NutzerResource.class)
+//									 .path(PartyResource.class, 
+//									 "findPartyById");
+//		final URI partyUri = 
+	}
 	
 	public URI getUriParty(Party party, UriInfo uriInfo) {
 		final UriBuilder ub = uriInfo.getBaseUriBuilder()

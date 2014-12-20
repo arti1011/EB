@@ -46,6 +46,7 @@ import static de.party.util.Constants.DEFAULT_PICTURE;
 @Entity
 @Table
 @NamedQueries( {
+	
 	@NamedQuery(name = Nutzer.FIND_NUTZER_BY_EMAIL, 
 					query = "SELECT n"
 								+ " FROM Nutzer n"
@@ -66,8 +67,8 @@ import static de.party.util.Constants.DEFAULT_PICTURE;
 					   query = "SELECT n"
 					   			+	" FROM Nutzer n"
 							    +	" JOIN n.parties p"
-					   			+	" WHERE n.parties =:" + Nutzer.PARAM_PARTY)
-//					   			+ 	" AND p.status =:" + Nutzer.PARAM_TEILNAHME_STATUS)
+					   			+	" WHERE p.party =:" + Nutzer.PARAM_PARTY
+					   			+ 	" AND p.status =:" + Nutzer.PARAM_TEILNAHME_STATUS)
 //	@NamedQuery(name = Nutzer.FIND_FRIENDS_BY_NUTZER, 
 //						query = "SELECT n"
 //								+ " FROM Nutzer n LEFT JOIN FETCH n.myFriends"
