@@ -13,12 +13,14 @@ import java.util.List;
 
 
 
+
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
@@ -111,15 +113,14 @@ public class Nutzer implements Serializable {
 	@NotNull
 	private Long picture_id = DEFAULT_PICTURE;
 	
+	@ManyToOne
+	private Party partis;
 
 	// Freunde Relation
 	@OneToMany(mappedBy = "owner", cascade = CascadeType.ALL)
 	private List<Freundschaft> myFriends;
 	
-	@Transient
-	private URI friendsUri;
-	
-//	@ManyToMany
+	//	@ManyToMany
 //	@JoinTable(name="PARTY_NUTZER",
 //				joinColumns={@JoinColumn(name="NUTZER_ID", referencedColumnName="ID")},
 //				inverseJoinColumns={@JoinColumn(name="PARTY_ID", referencedColumnName="ID")})
@@ -303,15 +304,6 @@ public class Nutzer implements Serializable {
 		this.aktualisiert = aktualisiert;
 	}
 
-	public URI getFriendsUri() {
-		return friendsUri;
-	}
-
-	public void setFriendsUri(URI friendsUri) {
-		this.friendsUri = friendsUri;
-	}
-	
-	
 	
 //	@XmlTransient
 //	public List<Party> getParties() {
@@ -389,6 +381,18 @@ public class Nutzer implements Serializable {
 
 	public void setVeranstalter(List<Party> veranstalter) {
 		this.veranstalter = veranstalter;
+	}
+
+
+	@XmlTransient
+	public Party getPartis() {
+		return partis;
+	}
+
+
+
+	public void setPartis(Party partis) {
+		this.partis = partis;
 	}
 
 

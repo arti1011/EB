@@ -3,7 +3,6 @@ package de.party.nutzer.domain;
 import java.io.Serializable;
 
 
-import java.util.List;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -20,9 +19,10 @@ import javax.xml.bind.annotation.XmlTransient;
 @XmlRootElement
 @NamedQueries( {
 @NamedQuery(name = Freundschaft.FIND_FRIENDS_BY_NUTZER,
-query = "SELECT DISTINCT f"
+query = "SELECT f"
 		+ " FROM Freundschaft f  "
-		+ " WHERE f.owner = :" + Freundschaft.ID_QUERY_PARAM)
+		+ " WHERE f.owner = :" + Freundschaft.ID_QUERY_PARAM
+		+ " OR f.friend = :" + Freundschaft.ID_QUERY_PARAM)
 })
 @IdClass(FreundschaftKey.class)
 public class Freundschaft implements Serializable {

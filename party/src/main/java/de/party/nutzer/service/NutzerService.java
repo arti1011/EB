@@ -233,9 +233,11 @@ public class NutzerService {
 		List<Nutzer> friends = new ArrayList<Nutzer>();
 		for (Freundschaft freund : myFriends) {
 			Nutzer friend = findNutzerById(freund.getFriend().getId());
-			
+						
 			friends.add(friend);
 		}
+		// eigenes Nutzer-Objekt aus der Ergebnisliste löschen
+		friends.remove(nutzer);
 		
 //				em.createNamedQuery(Nutzer.FIND_FRIENDS_BY_NUTZER, Nutzer.class)
 //									.setParameter(Nutzer.ID_QUERY_PARAM, nutzer.getId())

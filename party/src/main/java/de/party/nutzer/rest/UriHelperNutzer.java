@@ -1,13 +1,13 @@
 package de.party.nutzer.rest;
 
 import java.net.URI;
-import java.util.List;
+
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriInfo;
 
-import de.party.nutzer.domain.Freundschaft;
+
 import de.party.nutzer.domain.Nutzer;
 
 @ApplicationScoped
@@ -21,12 +21,13 @@ public class UriHelperNutzer {
 		return nutzerUri;
 	}
 	
+	//TODO Uri anpassen
 	public void updateUriNutzer(Nutzer nutzer, UriInfo uriInfo) {
 		final UriBuilder ub = uriInfo.getBaseUriBuilder()
 									 .path(NutzerResource.class)
 									 .path(NutzerResource.class, "findFriendsByNutzerId");
 		
-		final URI friendsUri = ub.build(nutzer.getId());
+		//final URI friendsUri = ub.build(nutzer.getId());
 
 		
 		final UriBuilder ub_party = uriInfo.getBaseUriBuilder()
@@ -36,6 +37,6 @@ public class UriHelperNutzer {
 		
 		
 		nutzer.setPartyUri(partyUri);
-		nutzer.setFriendsUri(friendsUri);
+		
 	}
 }

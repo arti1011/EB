@@ -7,6 +7,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.ws.rs.BadRequestException;
 
+
 import de.party.nutzer.domain.Nutzer;
 import de.party.party.domain.Party;
 import de.party.party.domain.PartyTeilnahme;
@@ -14,6 +15,8 @@ import de.party.party.domain.StatusType;
 
 public class PartyService {
 
+//	private static final Logger LOGGER = Logger.getLogger(PartyService.class);
+	
 	@PersistenceContext
 	private EntityManager em;
 	
@@ -100,8 +103,10 @@ public class PartyService {
 		if (veranstalter == null) {
 			throw new BadRequestException("Veranstalter nicht in der DB gefunden");
 		}
-		
+				
 		em.persist(party);
+		
+					
 		
 		return party;
 		

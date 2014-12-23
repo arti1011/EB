@@ -1,9 +1,11 @@
 package de.party.party.domain;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -41,6 +43,7 @@ public class PartyTeilnahme {
 	
 
 	@Id
+	@GeneratedValue
 	private Long id = KEINE_ID;
 	
 	@Column
@@ -49,12 +52,12 @@ public class PartyTeilnahme {
 	
 	//TODO kombinierte PK aus den FKs	
 	
-	@ManyToOne
+	@ManyToOne(cascade=CascadeType.PERSIST)
 	@JoinColumn(name="teilnehmer_id", updatable = false, insertable = false, referencedColumnName = "id")
 	private Nutzer teilnehmer;
 	
 	
-	@ManyToOne
+	@ManyToOne(cascade = CascadeType.PERSIST)
 	@JoinColumn(name="party_id", updatable = false, insertable = false, referencedColumnName = "id")
 	private Party party;
 	

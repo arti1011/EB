@@ -17,7 +17,6 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
-
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import de.party.nutzer.domain.Nutzer;
 import de.party.nutzer.service.NutzerService;
@@ -34,7 +33,6 @@ import static de.party.util.Constants.KEINE_ID;
 @RequestScoped
 public class PartyResource {
 
-	
 	
 	//Konstanten für Exceptions
 	private static final String NOT_FOUND_PARTY = "party.notFound";
@@ -177,14 +175,15 @@ public class PartyResource {
 	@POST
 	@Consumes(APPLICATION_JSON)
 	@Produces
-	public Response createParty(@Valid Party party) {
+	public Response createParty(@Valid Party party, List<Nutzer> teilnehmer) {
 		
+		// ID zurücksetzen
 		party.setId(KEINE_ID);
 		
-				
 		party = ps.createParty(party);
 		
 		
+				
 		final URI partyUri = uriHelperParty.getUriParty(party, uriInfo);
 		
 		return Response.created(partyUri).build();

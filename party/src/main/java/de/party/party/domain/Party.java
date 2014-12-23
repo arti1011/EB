@@ -103,8 +103,12 @@ public class Party implements Serializable {
 	@NotNull(message = "{party.veranstalter.notNull}")
 	private Nutzer veranstalter;
 	
-		
-	@OneToMany(mappedBy="party", cascade = CascadeType.ALL)
+	
+	@OneToMany(mappedBy="partis")
+	private List<Nutzer> nutzer;
+	
+	// Relation für Queries	
+	@OneToMany(mappedBy="party", cascade = CascadeType.PERSIST)
 	private List<PartyTeilnahme> teilnehmer;
 	
 	@OneToMany(mappedBy="party", cascade = CascadeType.ALL)
@@ -113,7 +117,14 @@ public class Party implements Serializable {
 //	@ManyToMany(mappedBy = "parties")
 //	private List<Nutzer> teilnehmer;
 	
-		
+	@Transient
+	private URI einladungenUri;
+	
+	@Transient
+	private URI zusagenUri;
+	
+	@Transient
+	private URI absagenUri;
 		
 	public Party() {
 		super();
@@ -196,6 +207,41 @@ public class Party implements Serializable {
 
 	public void setPartyitems(List<PartyItem> partyitems) {
 		this.partyitems = partyitems;
+	}
+
+	
+	public URI getEinladungenUri() {
+		return einladungenUri;
+	}
+
+	public void setEinladungenUri(URI einladungenUri) {
+		this.einladungenUri = einladungenUri;
+	}
+
+	public URI getZusagenUri() {
+		return zusagenUri;
+	}
+
+	public void setZusagenUri(URI zusagenUri) {
+		this.zusagenUri = zusagenUri;
+	}
+
+	public URI getAbsagenUri() {
+		return absagenUri;
+	}
+
+	public void setAbsagenUri(URI absagenUri) {
+		this.absagenUri = absagenUri;
+	}
+
+	
+	@XmlTransient
+	public List<Nutzer> getNutzer() {
+		return nutzer;
+	}
+
+	public void setNutzer(List<Nutzer> nutzer) {
+		this.nutzer = nutzer;
 	}
 
 	public void zusagen(Party party){
