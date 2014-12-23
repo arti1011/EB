@@ -1,11 +1,13 @@
 package de.party.party.service;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.ws.rs.BadRequestException;
+
 
 
 import de.party.nutzer.domain.Nutzer;
@@ -27,17 +29,31 @@ public class PartyService {
 		return party;
 	}
 
-	public List<Party> findPartiesByNutzer(Nutzer nutzer) {
-		if (nutzer == null) {
+	public List<Party> findOpenPartiesByNutzer(Nutzer veranstalter) {
+		if (veranstalter == null) {
 			return Collections.emptyList();
 			
 		}
-		final List<Party> parties = em.createNamedQuery(Party.FIND_PARTIES_BY_NUTZER, 
+		final List<Party> parties = em.createNamedQuery(Party.FIND_OPEN_PARTIES_BY_VERANSTALTER, 
 										Party.class)
-									  .setParameter(Party.PARAM_NUTZER, nutzer)
+									  .setParameter(Party.PARAM_NUTZER, veranstalter)
 									  .getResultList();
 		return parties;
 	}
+	
+	public List<Party> findClosedPartiesByNutzer(Nutzer veranstalter) {
+
+		if (veranstalter == null) {
+			return Collections.emptyList();
+		}
+		final List<Party> parties = em.createNamedQuery(Party.FIND_CLOSED_PARTIES_BY_VERANSTALTER,
+										Party.class)
+									  .setParameter(Party.PARAM_NUTZER, veranstalter)
+									  .getResultList();
+		
+		return parties;
+	}
+	
 
 	public List<Party> findOffeneEinladungenByNutzer(Nutzer nutzer) {
 		if (nutzer == null) {
@@ -111,6 +127,17 @@ public class PartyService {
 		return party;
 		
 	}
+
+	public void inviteFriendToParty(Party party, Nutzer freund) {
+		
+		final PartyTeilnahme partyTeilnahme = new PartyTeilnahme(party, freund);
+		
+		em.persist(partyTeilnahme);
+		
+		
+	}
+
+	
 
 	
 }

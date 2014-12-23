@@ -7,9 +7,11 @@ import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
 import javax.validation.Valid;
+import javax.ws.rs.BadRequestException;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -21,6 +23,7 @@ import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import de.party.nutzer.domain.Nutzer;
 import de.party.nutzer.service.NutzerService;
 import de.party.party.domain.Party;
+import de.party.party.domain.PartyTeilnahme;
 import de.party.party.service.PartyService;
 import de.party.util.rest.NotFoundException;
 import static de.party.util.Constants.KEINE_ID;
@@ -50,6 +53,7 @@ public class PartyResource {
 	@Inject
 	private NutzerService ns;
 	
+		
 	/**
 	 * Party anhand einer ID suchen
 	 * 
@@ -189,5 +193,48 @@ public class PartyResource {
 		return Response.created(partyUri).build();
 		
 	}
+	
+	/**
+	 * Freunde zur Party einladen. 
+	 * 
+	 *  
+	 * @param partyId
+	 * @param nutzer
+	 * @return Response.noContent() - HTTP 204
+	 */
+	@PUT
+	@Path("{id:[1-9][0-9]*}/invite")
+	@Consumes(APPLICATION_JSON)
+	@Produces
+	@Transactional
+	public Response inviteFriendsToParty(@PathParam("id") Long partyId, List<Nutzer> friends) {
+		
+		// Party-Objekt auslesen
+		final Party party = ps.findPartyById(partyId);
+		if (party == null) {
+			throw new NotFoundException(NOT_FOUND_PARTY, partyId);
+		}
+		if (friends == null || friends.isEmpty()) {
+			throw new BadRequestException("Es wurden keine Freunde zum einladen übergeben");
+		}
+		
+		//Persistente Nutzer-Objekte ermitteln
+				
+		for (Nutzer nutzer : friends) {
+			final Nutzer persistenterNutzer = ns.findNutzerById(nutzer.getId());
+			if (persistenterNutzer != null) {
+				ps.inviteFriendToParty(party, persistenterNutzer);
+				
+			}
+			
+		}
+		
+		
+				
+		return Response.noContent().build();
+		
+		
+	}
+	
 	
 	}

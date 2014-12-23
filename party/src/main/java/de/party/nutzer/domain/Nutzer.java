@@ -70,11 +70,18 @@ import static de.party.util.Constants.DEFAULT_PICTURE;
 					   			+	" FROM Nutzer n"
 							    +	" JOIN n.parties p"
 					   			+	" WHERE p.party =:" + Nutzer.PARAM_PARTY
-					   			+ 	" AND p.status =:" + Nutzer.PARAM_TEILNAHME_STATUS)
-//	@NamedQuery(name = Nutzer.FIND_FRIENDS_BY_NUTZER, 
-//						query = "SELECT n"
-//								+ " FROM Nutzer n LEFT JOIN FETCH n.myFriends"
-//								+ " WHERE n.id =:" + Nutzer.ID_QUERY_PARAM) 
+					   			+ 	" AND p.status =:" + Nutzer.PARAM_TEILNAHME_STATUS),
+	@NamedQuery(name = Nutzer.FIND_MY_FRIENDS_BY_NUTZER, 
+						query = "SELECT DISTINCT n"
+							   + " FROM Nutzer n"
+							   + " JOIN n.myFriends f"
+							   + " WHERE f.friend =:" + Nutzer.PARAM_NUTZER),
+	@NamedQuery(name = Nutzer.FIND_NUTZER_I_AM_FRIEND_OF, 
+						query = "SELECT DISTINCT n"
+								+ " FROM Nutzer n"
+								+ " JOIN n.friendOf f"
+								+ " WHERE f.owner =:" + Nutzer.PARAM_NUTZER)
+	
 })
 @XmlRootElement
 public class Nutzer implements Serializable {
@@ -86,6 +93,7 @@ public class Nutzer implements Serializable {
 	public final static String NACHNAME_QUERY_PARAM = "nachname";
 	public static final String PARAM_PARTY = "party";
 	public static final String PARAM_TEILNAHME_STATUS = "status";
+	public static final String PARAM_NUTZER = "nutzer";
 	
 	//Query Strings
 	//Nutzer
@@ -95,10 +103,12 @@ public class Nutzer implements Serializable {
 	
 	//Friends
 	public final static String FIND_FRIENDS_BY_ID = "findFriendsById";
-	public final static String FIND_FRIENDS_BY_NUTZER = "findFriendsByNutzer";
+	public final static String FIND_MY_FRIENDS_BY_NUTZER = "findFriendsByNutzer";
+	public final static String FIND_NUTZER_I_AM_FRIEND_OF = "findNutzerIamFriendOf";
 	
 	//Party
 	public static final String FIND_EINGELADENE_TEILNEHMER_BY_PARTY = "findEingeladeneTeilnehmerByParty";
+	public static final String FIND_NOT_INVITED_FRIENDS_BY_PARTY = "findNotInvitedFriendsByParty";
 
 	
 		
@@ -116,15 +126,14 @@ public class Nutzer implements Serializable {
 	@ManyToOne
 	private Party partis;
 
-	// Freunde Relation
+	// mit mir befreundet
 	@OneToMany(mappedBy = "owner", cascade = CascadeType.ALL)
 	private List<Freundschaft> myFriends;
 	
-	//	@ManyToMany
-//	@JoinTable(name="PARTY_NUTZER",
-//				joinColumns={@JoinColumn(name="NUTZER_ID", referencedColumnName="ID")},
-//				inverseJoinColumns={@JoinColumn(name="PARTY_ID", referencedColumnName="ID")})
-//	private List<Party> parties;
+	// befreundet mit...
+	@OneToMany(mappedBy = "friend", cascade = CascadeType.ALL)
+	private List<Freundschaft> friendOf;
+	
 	
 	@OneToMany(mappedBy="veranstalter")
 	private List<Party> veranstalter;
@@ -254,6 +263,20 @@ public class Nutzer implements Serializable {
 	public void setMyFriends(List<Freundschaft> myFriends) {
 		this.myFriends = myFriends;
 	}
+	
+	
+	@XmlTransient
+	public List<Freundschaft> getFriendOf() {
+		return friendOf;
+	}
+
+
+
+	public void setFriendOf(List<Freundschaft> friendOf) {
+		this.friendOf = friendOf;
+	}
+
+
 
 	public String getNachname() {
 		return nachname;

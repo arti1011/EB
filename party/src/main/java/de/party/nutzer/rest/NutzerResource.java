@@ -74,6 +74,8 @@ public class NutzerResource {
 
 	private static final String NOT_FOUND_USER = "nutzer.notFound";
 	
+	private static final String NOT_FOUND_PARTY = "party.notFound";
+	
 	@Context
 	private UriInfo uriInfo;
 	
@@ -251,6 +253,31 @@ public class NutzerResource {
 		
 	}
 	
+	/**
+	 * Alle Freunde auslesen die noch nicht zu meiner Party eingeladen wurden
+	 * 
+	 * --> Alle Freunde die weder Status ZUSAGE, OFFEN, ABSAGE zu dieser Party haben
+	 * 
+	 * @param party_id
+	 * @return List<Nutzer>
+	 */
+	@GET
+	@Path("/friends/notInvited/{id:[1-9][0-9]*}")
+	@Consumes(APPLICATION_JSON)
+	public Response findNotInvitedFriendsByPartyId(@PathParam("id") Long party_id) {
+		
+		//Party auslesen und anschließend Veranstalter = Nutzer-Objekt auslesen
+		final Party party = ps.findPartyById(party_id);
+		if (party == null) {
+			throw new NotFoundException(NOT_FOUND_PARTY, party_id);
+		}
+		final Nutzer veranstalter = party.getVeranstalter();
+		
+		List<Nutzer> notInvitedFriends = ns.findNotInvitedFriendsByParty(veranstalter, party);
+		
+		return Response.ok(notInvitedFriends).build();
+		
+	}
 	
 	
 	@Deprecated
@@ -309,24 +336,45 @@ public class NutzerResource {
 	}
 	
 	/**
-	 * Parties auslesen die der User mit der übergebenen ID veranstatelt und veranstaltet hat
+	 * Parties auslesen anhand der Veranstalter ID die noch offen sind
+	 * 
+	 * Wird benötigt um Freunde nachträglich noch einzuladen
 	 * 
 	 * @param nutzerId
-	 * @return
+	 * @return List<Party>
 	 */
 	@GET
-	@Path("{id:[1-9][0-9]*}/meinePartyVeranstaltungen")
-	public Response findPartiesByNutzerId(@PathParam("id") Long nutzerId) {
+	@Path("{id:[1-9][0-9]*}/meineOffenenPartyVeranstaltungen")
+	public Response findOpenPartiesByNutzerId(@PathParam("id") Long nutzerId) {
 		final Nutzer nutzer = ns.findNutzerById(nutzerId);
 		
 		if (nutzer == null) {
 			throw new NotFoundException(NOT_FOUND_USER, nutzerId);
 		}
 		
-		final List<Party> parties = ps.findPartiesByNutzer(nutzer);
+		final List<Party> parties = ps.findOpenPartiesByNutzer(nutzer);
 		
-				
+		return Response.ok(parties).build();
+	}
+	
+	/**
+	 * Alle Parties auslesen die in der Vergangenheit liegen und man selbst veranstaltet hat
+	 * 
+	 * Methode für Rating
+	 * 
+	 * @param nutzerId
+	 * @return List<Party>
+	 */
+	@GET
+	@Path("{id:[1-9][0-9]*}/meineGeschlossenenPartyVeranstaltungen")
+	public Response findClosedPartiesByNutzerId(@PathParam("id") Long nutzerId) {
+		final Nutzer veranstalter = ns.findNutzerById(nutzerId);
 		
+		if (veranstalter == null) {
+			throw new NotFoundException(NOT_FOUND_USER, nutzerId);
+		}
+		
+		final List<Party> parties = ps.findClosedPartiesByNutzer(veranstalter);
 		
 		return Response.ok(parties).build();
 	}

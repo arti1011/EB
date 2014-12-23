@@ -17,7 +17,6 @@ import de.party.nutzer.domain.Freundschaft;
 import de.party.nutzer.domain.Nutzer;
 import de.party.nutzer.domain.ProfilePicture;
 import de.party.party.domain.Party;
-import de.party.party.domain.PartyTeilnahme;
 import de.party.party.domain.StatusType;
 import static de.party.util.Constants.DEFAULT_PICTURE;
 
@@ -225,24 +224,24 @@ public class NutzerService {
 
 
 	public List<Nutzer> findFriendsByNutzer(Nutzer nutzer) {
-		List<Freundschaft> myFriends =  em.createNamedQuery(Freundschaft.FIND_FRIENDS_BY_NUTZER, Freundschaft.class)
-										  .setParameter(Freundschaft.ID_QUERY_PARAM, nutzer)
-										  .getResultList();
+
+		// Alle Nutzer-Objekte mit denen ich befreundet bin (ich = friend-Seite)
+		List<Nutzer> friendOf = em.createNamedQuery(Nutzer.FIND_MY_FRIENDS_BY_NUTZER, Nutzer.class)
+								 .setParameter(Nutzer.PARAM_NUTZER, nutzer)
+								 .getResultList();
+		
+		// Alle Nutzer-Objekte die Freunde von mir sind (ich = owner-Seite)
+		List<Nutzer> myFriends = em.createNamedQuery(Nutzer.FIND_NUTZER_I_AM_FRIEND_OF, Nutzer.class)
+								  .setParameter(Nutzer.PARAM_NUTZER, nutzer)
+								  .getResultList();
+		
+		// Ergebnis in einer Liste speichern und zürckgeben
+		List<Nutzer> allFriends = new ArrayList<Nutzer>();
 				
+		allFriends.addAll(myFriends);
+		allFriends.addAll(friendOf);
 		
-		List<Nutzer> friends = new ArrayList<Nutzer>();
-		for (Freundschaft freund : myFriends) {
-			Nutzer friend = findNutzerById(freund.getFriend().getId());
-						
-			friends.add(friend);
-		}
-		// eigenes Nutzer-Objekt aus der Ergebnisliste löschen
-		friends.remove(nutzer);
-		
-//				em.createNamedQuery(Nutzer.FIND_FRIENDS_BY_NUTZER, Nutzer.class)
-//									.setParameter(Nutzer.ID_QUERY_PARAM, nutzer.getId())
-//									.getResultList();
-		return friends;
+		return allFriends;
 		
 	}
 
@@ -289,6 +288,46 @@ public class NutzerService {
 		}
 		
 		return teilnehmer;
+	}
+
+
+	public List<Nutzer> findNotInvitedFriendsByParty(Nutzer veranstalter,
+			Party party) {
+		
+		// Erst Freunde auslesen
+		final List<Nutzer> friends = findFriendsByNutzer(veranstalter);
+		// Jetzt eingeladene Nutzer auslesen
+		final List<Nutzer> teilnehmer = findEingeladeneTeilnehmerByParty(party);
+		
+		//TODO Freunde suchen die zugesagt oder abgesagt haben
+		final List<Nutzer> zugesagteTeilnehmer = findZugesagteTeilnehmerByParty(party);
+		
+		final List<Nutzer> abgesagteTeilnehmer = findAbgesagteTeilnehmerByParty(party); 
+		
+		// Wenn noch keine Teilnehmer vorhanden sind Freundes-Liste zurückgeben
+		if (teilnehmer == null || teilnehmer.isEmpty()) {
+				if (zugesagteTeilnehmer == null || zugesagteTeilnehmer.isEmpty()) {
+					if (abgesagteTeilnehmer == null || abgesagteTeilnehmer.isEmpty()) {
+						return friends;
+					}
+				}
+		}
+		
+		final List<Nutzer> notInvitedFriends = new ArrayList<Nutzer>();
+		
+		// Freund mit ausgeben wenn er in keiner der drei Fälle auftaucht (OFFEN, ZUGESAGT, ABGESAGT)
+		for (Nutzer friend : friends) {
+			if (!(teilnehmer.contains(friend) || zugesagteTeilnehmer.contains(friend) 
+					|| abgesagteTeilnehmer.contains(friend))) {
+				notInvitedFriends.add(friend);
+			}				
+		}
+		
+		return notInvitedFriends;
+		
+		
+		
+		
 	}
 
 	

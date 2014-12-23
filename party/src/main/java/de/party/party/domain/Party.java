@@ -39,11 +39,18 @@ import static javax.persistence.TemporalType.TIMESTAMP;
 @Table
 @XmlRootElement
 @NamedQueries({
-	@NamedQuery(name = Party.FIND_PARTIES_BY_NUTZER, query = 
+	@NamedQuery(name = Party.FIND_OPEN_PARTIES_BY_VERANSTALTER, query = 
 						"SELECT p"
 					   + " FROM Party p"
 					   + " WHERE p.veranstalter = :"
-					   + Party.PARAM_NUTZER),
+					   + Party.PARAM_NUTZER
+					   + " AND CURRENT_TIMESTAMP < p.datum"),
+	@NamedQuery(name = Party.FIND_CLOSED_PARTIES_BY_VERANSTALTER, query = 
+						"SELECT p"
+					   + " FROM Party p"
+					   + " WHERE p.veranstalter = :"
+					   + Party.PARAM_NUTZER
+					   + " AND CURRENT_TIMESTAMP > p.datum"),				   
     @NamedQuery(name = Party.FIND_OFFENE_EINLADUNGEN_BY_NUTZER, query = 
     					"SELECT p"
     				+ 	" FROM Party p"
@@ -72,7 +79,8 @@ public class Party implements Serializable {
 	public static final String PARAM_TEILNEHMER = "teilnehmer";
 	public static final String PARAM_STATUS = "status";
 	
-	public static final String FIND_PARTIES_BY_NUTZER = PREFIX + "findPartiesByNutzer";
+	public static final String FIND_OPEN_PARTIES_BY_VERANSTALTER = PREFIX + "findOpenPartiesByVeranstalter";
+	public static final String FIND_CLOSED_PARTIES_BY_VERANSTALTER = PREFIX + "findClosedPartiesByVeranstalter";
 	public static final String FIND_OFFENE_EINLADUNGEN_BY_NUTZER = PREFIX + "findOffeneEinladungenByNutzer";
 
 	public static final String FIND_ZUGESAGTE_PARTIES_BY_NUTZER = PREFIX + "findZugesagtePartiesByNutzer";

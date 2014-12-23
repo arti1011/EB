@@ -53,17 +53,26 @@ public class PartyTeilnahme {
 	//TODO kombinierte PK aus den FKs	
 	
 	@ManyToOne(cascade=CascadeType.PERSIST)
-	@JoinColumn(name="teilnehmer_id", updatable = false, insertable = false, referencedColumnName = "id")
+	@JoinColumn(name="teilnehmer_id", updatable = false, referencedColumnName = "id")
 	private Nutzer teilnehmer;
 	
 	
 	@ManyToOne(cascade = CascadeType.PERSIST)
-	@JoinColumn(name="party_id", updatable = false, insertable = false, referencedColumnName = "id")
+	@JoinColumn(name="party_id", updatable = false, referencedColumnName = "id")
 	private Party party;
 	
 	public PartyTeilnahme() {
 		super();
 	}
+	
+	// Neue PartyTeilnahme, Freunde eingeladen
+	public PartyTeilnahme(Party party, Nutzer nutzer) {
+		super();
+		this.setParty(party);
+		this.setTeilnehmer(nutzer);
+		this.setStatus(StatusType.OFFEN);
+	}
+	
 
 	public StatusType getStatus() {
 		return status;
