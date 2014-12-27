@@ -144,11 +144,6 @@ public class Nutzer implements Serializable {
 	@OneToMany(mappedBy="mitbringer", cascade = CascadeType.ALL)
 	private List<ItemMitbringer> mitbringer;
 	
-	
-	@Transient
-	private URI partyUri;
-	
-		
 	@Column(nullable = false)
 	@NotNull(message = "{nutzerverwaltung.email.notNull")
 	@Pattern(regexp="[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\."
@@ -187,6 +182,15 @@ public class Nutzer implements Serializable {
 
 	@OneToOne(cascade = {PERSIST, REMOVE}, mappedBy = "nutzer")
 	private Adresse adresse;
+	
+	@Transient
+	private URI meinePartyEinladungenUri;
+	
+	@Transient
+	private URI meinePartyZusagenUri;
+	
+	@Transient
+	private URI meinePartyAbsagenUri;
 	
 	public Nutzer() {
 		super();
@@ -382,19 +386,6 @@ public class Nutzer implements Serializable {
 
 
 
-	public URI getPartyUri() {
-		return partyUri;
-	}
-
-	
-
-
-
-	public void setPartyUri(URI partyUri) {
-		this.partyUri = partyUri;
-	}
-	
-
 	@XmlTransient
 	public List<Party> getVeranstalter() {
 		return veranstalter;
@@ -416,6 +407,40 @@ public class Nutzer implements Serializable {
 
 	public void setPartis(Party partis) {
 		this.partis = partis;
+	}
+
+	public URI getMeinePartyEinladungenUri() {
+		return meinePartyEinladungenUri;
+	}
+
+
+
+	public void setMeinePartyEinladungenUri(URI meinePartyEinladungenUri) {
+		this.meinePartyEinladungenUri = meinePartyEinladungenUri;
+	}
+
+
+
+	public URI getMeinePartyZusagenUri() {
+		return meinePartyZusagenUri;
+	}
+
+
+
+	public void setMeinePartyZusagenUri(URI meinePartyZusagenUri) {
+		this.meinePartyZusagenUri = meinePartyZusagenUri;
+	}
+
+
+
+	public URI getMeinePartyAbsagenUri() {
+		return meinePartyAbsagenUri;
+	}
+
+
+
+	public void setMeinePartyAbsagenUri(URI meinePartyAbsagenUri) {
+		this.meinePartyAbsagenUri = meinePartyAbsagenUri;
 	}
 
 

@@ -64,6 +64,13 @@ import static javax.persistence.TemporalType.TIMESTAMP;
 					+	" JOIN p.teilnehmer t"
 					+ 	" WHERE t.teilnehmer = :"+ Party.PARAM_TEILNEHMER
 					+	" AND t.status = :" + Party.PARAM_STATUS
+					+	" AND CURRENT_TIMESTAMP < p.datum"),
+	@NamedQuery(name = Party.FIND_ABGESAGTE_PARTIES_BY_NUTZER, query = 
+						"SELECT p"
+					+	" FROM Party p"
+					+	" JOIN p.teilnehmer t"
+					+	" WHERE t.teilnehmer = :"+ Party.PARAM_TEILNEHMER
+					+	" AND t.status = :" + Party.PARAM_STATUS
 					+	" AND CURRENT_TIMESTAMP < p.datum")
 })
 public class Party implements Serializable {
@@ -84,6 +91,7 @@ public class Party implements Serializable {
 	public static final String FIND_OFFENE_EINLADUNGEN_BY_NUTZER = PREFIX + "findOffeneEinladungenByNutzer";
 
 	public static final String FIND_ZUGESAGTE_PARTIES_BY_NUTZER = PREFIX + "findZugesagtePartiesByNutzer";
+	public static final String FIND_ABGESAGTE_PARTIES_BY_NUTZER = PREFIX + "findAbgesagtePartiesByNutzer";
 	
 	
 	@Id

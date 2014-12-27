@@ -1,6 +1,5 @@
 package de.party.party.service;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -25,6 +24,8 @@ public class PartyService {
 	public Party findPartyById(Long id) {
 
 		Party party = em.find(Party.class, id);
+		
+		
 		
 		return party;
 	}
@@ -68,7 +69,7 @@ public class PartyService {
 		return offeneEinladungen;
 	}
 
-	public void offeneEinladungZusagen(Nutzer nutzer, Party party) {
+	public void partyZusagen(Nutzer nutzer, Party party) {
 		
 		final PartyTeilnahme partyTeilnahme = em.createNamedQuery(PartyTeilnahme.FIND_PARTY_TEILNAHME, PartyTeilnahme.class)
 																				.setParameter(PartyTeilnahme.PARAM_TEILNEHMER, nutzer)
@@ -105,6 +106,18 @@ public class PartyService {
 		em.merge(partyTeilnahme);
 		
 	}
+	
+	public List<Party> findAbgesagtePartiesByNutzer(Nutzer nutzer) {
+		if (nutzer == null) {
+			return Collections.emptyList();
+		}
+		final List<Party> abgesagteParties = em.createNamedQuery(Party.FIND_ABGESAGTE_PARTIES_BY_NUTZER, Party.class)
+											   .setParameter(Party.PARAM_TEILNEHMER, nutzer)
+											   .setParameter(Party.PARAM_STATUS, StatusType.ABSAGE)
+											   .getResultList();
+		return abgesagteParties;
+	}
+	
 
 	public Party createParty(Party party) {
 		
@@ -136,6 +149,8 @@ public class PartyService {
 		
 		
 	}
+
+	
 
 	
 

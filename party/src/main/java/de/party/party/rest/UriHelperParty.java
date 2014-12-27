@@ -3,10 +3,10 @@ package de.party.party.rest;
 import java.net.URI;
 
 
+
 import javax.enterprise.context.ApplicationScoped;
 import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriInfo;
-
 import de.party.party.domain.Party;
 
 @ApplicationScoped
@@ -46,6 +46,8 @@ public class UriHelperParty {
 									 .path(PartyResource.class)
 									 .path(PartyResource.class, "findPartyById");
 		final URI uri = ub.build(party.getId());
+		
+		
 		return uri;
 									 
 	}

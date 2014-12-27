@@ -9,7 +9,6 @@ import javax.persistence.Id;
 import javax.persistence.IdClass;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
@@ -18,11 +17,6 @@ import javax.xml.bind.annotation.XmlTransient;
 @Table
 @XmlRootElement
 @NamedQueries( {
-//@NamedQuery(name = Freundschaft.FIND_FRIENDS_BY_NUTZER,
-//query = "SELECT f"
-//		+ " FROM Freundschaft f  "
-//		+ " WHERE f.owner = :" + Freundschaft.ID_QUERY_PARAM
-//		+ " OR f.friend = :" + Freundschaft.ID_QUERY_PARAM)
 })
 @IdClass(FreundschaftKey.class)
 public class Freundschaft implements Serializable {
