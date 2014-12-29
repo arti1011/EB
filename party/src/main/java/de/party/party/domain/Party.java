@@ -133,14 +133,14 @@ public class Party implements Serializable {
 //	@ManyToMany(mappedBy = "parties")
 //	private List<Nutzer> teilnehmer;
 	
-	@Transient
-	private URI einladungenUri;
-	
-	@Transient
-	private URI zusagenUri;
-	
-	@Transient
-	private URI absagenUri;
+//	@Transient
+//	private URI einladungenUri;
+//	
+//	@Transient
+//	private URI zusagenUri;
+//	
+//	@Transient
+//	private URI absagenUri;
 		
 	public Party() {
 		super();
@@ -226,29 +226,29 @@ public class Party implements Serializable {
 	}
 
 	
-	public URI getEinladungenUri() {
-		return einladungenUri;
-	}
-
-	public void setEinladungenUri(URI einladungenUri) {
-		this.einladungenUri = einladungenUri;
-	}
-
-	public URI getZusagenUri() {
-		return zusagenUri;
-	}
-
-	public void setZusagenUri(URI zusagenUri) {
-		this.zusagenUri = zusagenUri;
-	}
-
-	public URI getAbsagenUri() {
-		return absagenUri;
-	}
-
-	public void setAbsagenUri(URI absagenUri) {
-		this.absagenUri = absagenUri;
-	}
+//	public URI getEinladungenUri() {
+//		return einladungenUri;
+//	}
+//
+//	public void setEinladungenUri(URI einladungenUri) {
+//		this.einladungenUri = einladungenUri;
+//	}
+//
+//	public URI getZusagenUri() {
+//		return zusagenUri;
+//	}
+//
+//	public void setZusagenUri(URI zusagenUri) {
+//		this.zusagenUri = zusagenUri;
+//	}
+//
+//	public URI getAbsagenUri() {
+//		return absagenUri;
+//	}
+//
+//	public void setAbsagenUri(URI absagenUri) {
+//		this.absagenUri = absagenUri;
+//	}
 
 	
 	@XmlTransient

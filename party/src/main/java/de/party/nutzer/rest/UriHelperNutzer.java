@@ -39,12 +39,12 @@ public class UriHelperNutzer {
 		// Meine offenen Party- Einladungen
 		final UriBuilder ub_offenePartyEinladungen = uriInfo.getBaseUriBuilder()
 				  								  .path(NutzerResource.class)
-				  								  .path(NutzerResource.class, "findAbgesagtePartiesyNutzerId");
+				  								  .path(NutzerResource.class, "findOffeneEinladungenByNutzerId");
 		final URI partyOffenUri = ub_offenePartyEinladungen.build(nutzer.getId());
 		
-		nutzer.setMeinePartyEinladungenUri(partyOffenUri);
-		nutzer.setMeinePartyZusagenUri(partyZusagenUri);
-		nutzer.setMeinePartyAbsagenUri(partyAbsagenUri);
+//		nutzer.setMeinePartyEinladungenUri(partyOffenUri);
+//		nutzer.setMeinePartyZusagenUri(partyZusagenUri);
+//		nutzer.setMeinePartyAbsagenUri(partyAbsagenUri);
 		
 		
 	}

@@ -36,9 +36,9 @@ public class UriHelperParty {
 													"findAbgesagteTeilnehmerByPartyId");
 		final URI absagenUri = absagenUriBuilder.build(party.getId());
 		
-		party.setEinladungenUri(eingeladenUri);
-		party.setZusagenUri(zusagenUri);
-		party.setAbsagenUri(absagenUri);
+//		party.setEinladungenUri(eingeladenUri);
+//		party.setZusagenUri(zusagenUri);
+//		party.setAbsagenUri(absagenUri);
 	}
 	
 	public URI getUriParty(Party party, UriInfo uriInfo) {

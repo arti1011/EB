@@ -146,6 +146,11 @@ public class NutzerResource {
 			throw new NotFoundException(NOT_FOUND_NACHNAME, nachnamePrefix);
 		}
 		
+		//URIs anpassen
+		for (Nutzer singleUser : nutzer) {
+			uriHelperNutzer.updateUriNutzer(singleUser, uriInfo);
+		}
+		
 		return Response.ok(nutzer).build();
 		
 	}
@@ -367,10 +372,12 @@ public class NutzerResource {
 	@Path("{id:[1-9][0-9]*}/offeneEinladungen")
 	public Response findOffeneEinladungenByNutzerId(@PathParam("id") Long nutzerId) {
 		final Nutzer nutzer = ns.findNutzerById(nutzerId);
+		
+		uriHelperNutzer.updateUriNutzer(nutzer, uriInfo);
+		
 		final List<Party> parties = ps.findOffeneEinladungenByNutzer(nutzer);
 		
-		
-		
+			
 		return Response.ok(parties).build();
 		
 	}
@@ -445,6 +452,9 @@ public class NutzerResource {
 	@Path("{id:[1-9][0-9]*}/zugesagteParties")
 	public Response findZugesagtePartiesyNutzerId(@PathParam("id") Long nutzerId) {
 		final Nutzer nutzer = ns.findNutzerById(nutzerId);
+		
+		uriHelperNutzer.updateUriNutzer(nutzer, uriInfo);
+		
 		final List<Party> parties = ps.findZugesagtePartiesByNutzer(nutzer);
 		
 		

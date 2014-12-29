@@ -183,14 +183,14 @@ public class Nutzer implements Serializable {
 	@OneToOne(cascade = {PERSIST, REMOVE}, mappedBy = "nutzer")
 	private Adresse adresse;
 	
-	@Transient
-	private URI meinePartyEinladungenUri;
-	
-	@Transient
-	private URI meinePartyZusagenUri;
-	
-	@Transient
-	private URI meinePartyAbsagenUri;
+//	@Transient
+//	private URI meinePartyEinladungenUri;
+//	
+//	@Transient
+//	private URI meinePartyZusagenUri;
+//	
+//	@Transient
+//	private URI meinePartyAbsagenUri;
 	
 	public Nutzer() {
 		super();
@@ -409,40 +409,40 @@ public class Nutzer implements Serializable {
 		this.partis = partis;
 	}
 
-	public URI getMeinePartyEinladungenUri() {
-		return meinePartyEinladungenUri;
-	}
-
-
-
-	public void setMeinePartyEinladungenUri(URI meinePartyEinladungenUri) {
-		this.meinePartyEinladungenUri = meinePartyEinladungenUri;
-	}
-
-
-
-	public URI getMeinePartyZusagenUri() {
-		return meinePartyZusagenUri;
-	}
-
-
-
-	public void setMeinePartyZusagenUri(URI meinePartyZusagenUri) {
-		this.meinePartyZusagenUri = meinePartyZusagenUri;
-	}
-
-
-
-	public URI getMeinePartyAbsagenUri() {
-		return meinePartyAbsagenUri;
-	}
-
-
-
-	public void setMeinePartyAbsagenUri(URI meinePartyAbsagenUri) {
-		this.meinePartyAbsagenUri = meinePartyAbsagenUri;
-	}
-
+//	public URI getMeinePartyEinladungenUri() {
+//		return meinePartyEinladungenUri;
+//	}
+//
+//
+//
+//	public void setMeinePartyEinladungenUri(URI meinePartyEinladungenUri) {
+//		this.meinePartyEinladungenUri = meinePartyEinladungenUri;
+//	}
+//
+//
+//
+//	public URI getMeinePartyZusagenUri() {
+//		return meinePartyZusagenUri;
+//	}
+//
+//
+//
+//	public void setMeinePartyZusagenUri(URI meinePartyZusagenUri) {
+//		this.meinePartyZusagenUri = meinePartyZusagenUri;
+//	}
+//
+//
+//
+//	public URI getMeinePartyAbsagenUri() {
+//		return meinePartyAbsagenUri;
+//	}
+//
+//
+//
+//	public void setMeinePartyAbsagenUri(URI meinePartyAbsagenUri) {
+//		this.meinePartyAbsagenUri = meinePartyAbsagenUri;
+//	}
+//
 
 
 	@Override
