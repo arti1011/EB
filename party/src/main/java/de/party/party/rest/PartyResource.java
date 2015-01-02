@@ -23,7 +23,6 @@ import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import de.party.nutzer.domain.Nutzer;
 import de.party.nutzer.service.NutzerService;
 import de.party.party.domain.Party;
-import de.party.party.domain.PartyTeilnahme;
 import de.party.party.service.PartyService;
 import de.party.util.rest.NotFoundException;
 import static de.party.util.Constants.KEINE_ID;
@@ -73,6 +72,7 @@ public class PartyResource {
 		}
 		
 		uriHelperParty.updateUriParty(party, uriInfo);
+		
 		return Response.ok(party).build();
 	}
 	

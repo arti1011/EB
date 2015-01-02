@@ -2,8 +2,6 @@ package de.party.nutzer.domain;
 
 import java.io.Serializable;
 
-import javax.persistence.Id;
-import javax.persistence.ManyToOne;
 
 
 public class FreundschaftKey implements Serializable {

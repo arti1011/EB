@@ -64,6 +64,13 @@ import static javax.persistence.TemporalType.TIMESTAMP;
 					+	" JOIN p.teilnehmer t"
 					+ 	" WHERE t.teilnehmer = :"+ Party.PARAM_TEILNEHMER
 					+	" AND t.status = :" + Party.PARAM_STATUS
+					+	" AND CURRENT_TIMESTAMP < p.datum"),
+	@NamedQuery(name = Party.FIND_ABGESAGTE_PARTIES_BY_NUTZER, query = 
+						"SELECT p"
+					+	" FROM Party p"
+					+	" JOIN p.teilnehmer t"
+					+	" WHERE t.teilnehmer = :"+ Party.PARAM_TEILNEHMER
+					+	" AND t.status = :" + Party.PARAM_STATUS
 					+	" AND CURRENT_TIMESTAMP < p.datum")
 })
 public class Party implements Serializable {
@@ -84,6 +91,7 @@ public class Party implements Serializable {
 	public static final String FIND_OFFENE_EINLADUNGEN_BY_NUTZER = PREFIX + "findOffeneEinladungenByNutzer";
 
 	public static final String FIND_ZUGESAGTE_PARTIES_BY_NUTZER = PREFIX + "findZugesagtePartiesByNutzer";
+	public static final String FIND_ABGESAGTE_PARTIES_BY_NUTZER = PREFIX + "findAbgesagtePartiesByNutzer";
 	
 	
 	@Id
@@ -125,14 +133,14 @@ public class Party implements Serializable {
 //	@ManyToMany(mappedBy = "parties")
 //	private List<Nutzer> teilnehmer;
 	
-	@Transient
-	private URI einladungenUri;
-	
-	@Transient
-	private URI zusagenUri;
-	
-	@Transient
-	private URI absagenUri;
+//	@Transient
+//	private URI einladungenUri;
+//	
+//	@Transient
+//	private URI zusagenUri;
+//	
+//	@Transient
+//	private URI absagenUri;
 		
 	public Party() {
 		super();
@@ -218,29 +226,29 @@ public class Party implements Serializable {
 	}
 
 	
-	public URI getEinladungenUri() {
-		return einladungenUri;
-	}
-
-	public void setEinladungenUri(URI einladungenUri) {
-		this.einladungenUri = einladungenUri;
-	}
-
-	public URI getZusagenUri() {
-		return zusagenUri;
-	}
-
-	public void setZusagenUri(URI zusagenUri) {
-		this.zusagenUri = zusagenUri;
-	}
-
-	public URI getAbsagenUri() {
-		return absagenUri;
-	}
-
-	public void setAbsagenUri(URI absagenUri) {
-		this.absagenUri = absagenUri;
-	}
+//	public URI getEinladungenUri() {
+//		return einladungenUri;
+//	}
+//
+//	public void setEinladungenUri(URI einladungenUri) {
+//		this.einladungenUri = einladungenUri;
+//	}
+//
+//	public URI getZusagenUri() {
+//		return zusagenUri;
+//	}
+//
+//	public void setZusagenUri(URI zusagenUri) {
+//		this.zusagenUri = zusagenUri;
+//	}
+//
+//	public URI getAbsagenUri() {
+//		return absagenUri;
+//	}
+//
+//	public void setAbsagenUri(URI absagenUri) {
+//		this.absagenUri = absagenUri;
+//	}
 
 	
 	@XmlTransient

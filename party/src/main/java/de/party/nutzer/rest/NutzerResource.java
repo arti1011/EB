@@ -21,25 +21,6 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 import org.jboss.logging.Logger;
 
 import com.google.common.base.Strings;
@@ -51,9 +32,6 @@ import de.party.nutzer.domain.Nutzer;
 import de.party.nutzer.domain.ProfilePicture;
 import de.party.nutzer.service.NutzerService;
 import de.party.party.domain.Party;
-import de.party.party.domain.PartyTeilnahme;
-import de.party.party.domain.StatusType;
-import de.party.party.rest.UriHelperParty;
 import de.party.party.service.PartyService;
 import de.party.util.rest.NotFoundException;
 
@@ -168,6 +146,11 @@ public class NutzerResource {
 			throw new NotFoundException(NOT_FOUND_NACHNAME, nachnamePrefix);
 		}
 		
+		//URIs anpassen
+		for (Nutzer singleUser : nutzer) {
+			uriHelperNutzer.updateUriNutzer(singleUser, uriInfo);
+		}
+		
 		return Response.ok(nutzer).build();
 		
 	}
@@ -274,7 +257,7 @@ public class NutzerResource {
 		}
 		final Nutzer veranstalter = party.getVeranstalter();
 		
-		List<Nutzer> notInvitedFriends = ns.findNotInvitedFriendsByParty(veranstalter, party);
+		final List<Nutzer> notInvitedFriends = ns.findNotInvitedFriendsByParty(veranstalter, party);
 		
 		return Response.ok(notInvitedFriends).build();
 		
@@ -390,8 +373,12 @@ public class NutzerResource {
 	@Path("{id:[1-9][0-9]*}/offeneEinladungen")
 	public Response findOffeneEinladungenByNutzerId(@PathParam("id") Long nutzerId) {
 		final Nutzer nutzer = ns.findNutzerById(nutzerId);
+		
+		uriHelperNutzer.updateUriNutzer(nutzer, uriInfo);
+		
 		final List<Party> parties = ps.findOffeneEinladungenByNutzer(nutzer);
 		
+			
 		return Response.ok(parties).build();
 		
 	}
@@ -407,7 +394,7 @@ public class NutzerResource {
 	@Path("{id:[1-9][0-9]*}/offeneEinladungen/zusagen")
 	@Consumes(APPLICATION_JSON)
 	@Produces
-	public Response offeneEinladungZusagen(@PathParam("id") Long nutzerId, Party party) {
+	public Response partyZusagen(@PathParam("id") Long nutzerId, Party party) {
 		
 		
 		
@@ -419,7 +406,7 @@ public class NutzerResource {
 		}
 		
 		// Zusagen
-		ps.offeneEinladungZusagen(nutzer, party);
+		ps.partyZusagen(nutzer, party);
 		
 		return Response.noContent().build();
 	}
@@ -466,7 +453,12 @@ public class NutzerResource {
 	@Path("{id:[1-9][0-9]*}/zugesagteParties")
 	public Response findZugesagtePartiesyNutzerId(@PathParam("id") Long nutzerId) {
 		final Nutzer nutzer = ns.findNutzerById(nutzerId);
+		
+		uriHelperNutzer.updateUriNutzer(nutzer, uriInfo);
+		
 		final List<Party> parties = ps.findZugesagtePartiesByNutzer(nutzer);
+		
+		
 		
 		return Response.ok(parties).build();
 		
@@ -502,6 +494,59 @@ public class NutzerResource {
 		return Response.noContent().build();
 	}
 	
+	/**
+	 * Alle Parties auslesen, die man abgesagt hat und deren Datum noch in der Zukunft liegt.
+	 * 
+	 * --> Danach eventuell wieder zusagen
+	 * 
+	 * NFE wenn Benutzer nicht gefunden wird
+	 * 
+	 * @param nutzerId
+	 * @return List<Party>
+	 * 
+	 * @throws NotFoundException
+	 */
+	@GET
+	@Path("{id:[1-9][0-9]*}/abgesagteParties")
+	public Response findAbgesagtePartiesyNutzerId(@PathParam("id") Long nutzerId) {
+		final Nutzer nutzer = ns.findNutzerById(nutzerId);
+		if (nutzer == null) {
+			throw new NotFoundException(NOT_FOUND_USER, nutzerId);
+		}
+		final List<Party> parties = ps.findAbgesagtePartiesByNutzer(nutzer);
 		
+		return Response.ok(parties).build();
+		
+	}	
+	
+	/**
+	 * Zu einer schon abgesagten Party zusagen.
+	 * Hinweis: Nur in Kombination mit voherigem GET nutzen, da dies garantiert, dass nur Parties wieder 
+	 * zugesagtwerden die noch in der Zukunft liegen
+	 * 
+	 * @param nutzerId
+	 * @param party
+	 * @return no Content - 204
+	 */
+	@PUT
+	@Path("{id:[1-9][0-9]*}/abgesagteParties/zusagen")
+	@Consumes(APPLICATION_JSON)
+	@Produces
+	public Response abgesagtePartyZusagen(@PathParam("id") Long nutzerId, Party party) {
+		
+		
+		
+		final Nutzer nutzer = ns.findNutzerById(nutzerId);
+		
+		//TODO exception message key
+		if (nutzer == null || party == null) {
+			throw new NotFoundException("Sie wurden zu dieser Party nicht eingeladen.");
+		}
+		
+		// Zusagen
+		ps.partyZusagen(nutzer, party);
+		
+		return Response.noContent().build();
+	}
 	
 }
