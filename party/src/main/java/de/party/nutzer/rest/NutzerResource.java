@@ -181,6 +181,7 @@ public class NutzerResource {
 	 */
 	@GET
 	@Path("{id:[1-9][0-9]*}")
+	@Produces(APPLICATION_JSON)
 	public Response findNutzerById(@PathParam("id") Long id) {
 		final Nutzer nutzer = ns.findNutzerById(id);
 		
