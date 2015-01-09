@@ -13,7 +13,14 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import de.party.nutzer.domain.Nutzer;
 
-
+/**
+ * Relation zwischen PartyItem und dem Teilnehmer (=Mitbringer) einer Party.
+ * 
+ * 1 Partyitem kann von n Personen mitgebracht werden
+ * 
+ * @author Michael
+ *
+ */
 @Entity
 @Table
 @XmlRootElement
