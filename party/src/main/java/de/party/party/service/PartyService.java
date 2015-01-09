@@ -198,6 +198,11 @@ public class PartyService {
 		return sum/anzahl;
 	}
 
+	public Ranking findRankingsByParty(Party party) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 	
 
 	

@@ -1,5 +1,6 @@
 package de.party.nutzer.rest;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -19,6 +20,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
+
 
 
 
@@ -574,7 +576,41 @@ public class NutzerResource {
 		return Response.ok(parties).build();
 		
 	}
-	
-	
-	
+
+	/**
+	 * Rankings zu den Parties auslesen die der User veranstaltet hat
+	 * Methode für View: Ranking
+	 * 
+	 * @param veranstalterId
+	 * @return
+	 */
+	@GET
+	@Path("{id:[1-9][0-9]*}/meineParties/ranking")
+	public Response getRankingsToMyParties(@PathParam("id") Long veranstalterId) {
+		final Nutzer veranstalter = ns.findNutzerById(veranstalterId);
+		
+		if (veranstalter == null) {
+			throw new NotFoundException(NOT_FOUND_USER, veranstalterId);
+		}
+		
+		final List<Party> parties = ps.findClosedPartiesByNutzer(veranstalter);
+		
+		final List<Ranking> rankings = new ArrayList<>();
+		
+		//Liste der einzelnen Ratings auslesen
+		for (Party party : parties) {
+			final Ranking ranking = ps.findRankingsByParty(party);
+			
+			//Rating zur Party holen und wieder im Ranking-Objekt speichern
+			ranking.setRating(ps.getRatingToParty(party));
+			
+			//Ranking-Objekt in der Ergebnisliste speichern
+		}
+		//TODO Methode weiterbauen..
+		return null;
+		
+		
+		
+	}
+		
 }
