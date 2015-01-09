@@ -23,6 +23,7 @@ import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import de.party.nutzer.domain.Nutzer;
 import de.party.nutzer.service.NutzerService;
 import de.party.party.domain.Party;
+import de.party.party.domain.Ranking;
 import de.party.party.service.PartyService;
 import de.party.util.rest.NotFoundException;
 import static de.party.util.Constants.KEINE_ID;
@@ -235,6 +236,17 @@ public class PartyResource {
 		
 		
 	}
-	
+	@POST
+	@Path("/bewerten")
+	@Consumes(APPLICATION_JSON)
+	@Transactional
+	public Response rateParty(Ranking ranking) {
+		//ID zurücksetzen
+		ranking.setId(KEINE_ID);
+		
+		ranking = ps.bewerteParty(ranking);
+		return Response.created(null).build();
 	
 	}
+	
+}

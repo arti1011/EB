@@ -42,7 +42,28 @@ public class Ranking implements Serializable{
 
 	@Column
 	private String kommentar;
+	
+	public Ranking(Party party, Nutzer nutzer, int rating, String kommentar) {
+		this.party = party;
+		this.teilnehmer = nutzer;
+		this.rating = rating;
+		this.kommentar = kommentar;
+	}
+	
+	public Ranking() {
+		super();
+	}
 		
+	
+	
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+
 	public Nutzer getTeilnehmer() {
 		return teilnehmer;
 	}

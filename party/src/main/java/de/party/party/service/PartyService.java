@@ -9,9 +9,11 @@ import javax.ws.rs.BadRequestException;
 
 
 
+
 import de.party.nutzer.domain.Nutzer;
 import de.party.party.domain.Party;
 import de.party.party.domain.PartyTeilnahme;
+import de.party.party.domain.Ranking;
 import de.party.party.domain.StatusType;
 
 public class PartyService {
@@ -147,6 +149,31 @@ public class PartyService {
 		
 		em.persist(partyTeilnahme);
 		
+		
+	}
+
+	public List<Party> findPartiesIAttendedByNutzer(Nutzer nutzer) {
+		if (nutzer == null) {
+			return Collections.emptyList();
+		}
+		final List<Party> partiesIAttended = em.createNamedQuery(Party.FIND_ATTENDED_PARTIES_BY_NUTZER, Party.class)
+																	   .setParameter(Party.PARAM_TEILNEHMER, nutzer)
+																	   .setParameter(Party.PARAM_STATUS, StatusType.ZUSAGE)
+																	   .getResultList();
+		
+		
+		return partiesIAttended;
+	}
+
+	public Ranking bewerteParty(Ranking ranking) {
+		
+		if (ranking == null) {
+			return ranking;
+		}
+		
+		em.persist(ranking);
+		
+		return ranking;
 		
 	}
 
