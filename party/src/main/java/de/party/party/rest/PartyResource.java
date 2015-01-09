@@ -236,6 +236,13 @@ public class PartyResource {
 		
 		
 	}
+	/**
+	 * Eine Party bewerten
+	 * 
+	 * 
+	 * @param ranking
+	 * @return
+	 */
 	@POST
 	@Path("/bewerten")
 	@Consumes(APPLICATION_JSON)
@@ -248,5 +255,18 @@ public class PartyResource {
 		return Response.created(null).build();
 	
 	}
+	
+	@GET
+	@Path("{id:[1-9][0-9]*}/rating")
+	public Response getRatingToPartyId(@PathParam("id") Long id) {
+		
+		//Party-Objekt ermitteln
+		final Party party = ps.findPartyById(id);
+		
+		final Double rating = ps.getRatingToParty(party);
+		
+		return Response.ok(rating).build();
+	}
+	
 	
 }

@@ -79,7 +79,8 @@ import static javax.persistence.TemporalType.TIMESTAMP;
 					+	" JOIN p.teilnehmer t"
 					+	" WHERE t.teilnehmer = :"+ Party.PARAM_TEILNEHMER
 					+	" AND t.status = :" + Party.PARAM_STATUS
-					+	" AND CURRENT_TIMESTAMP > p.datum")	
+					+	" AND CURRENT_TIMESTAMP > p.datum"
+					)					
 })
 public class Party implements Serializable {
 

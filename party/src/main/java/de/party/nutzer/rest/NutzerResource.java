@@ -554,6 +554,7 @@ public class NutzerResource {
 	 * Alle Parties anzeigen an denen der User teilgenommen hat
 	 * 
 	 * Es werden nur die Parties ausgelesen, die schon stattgefunden habe (Datum=in der Vergangenheit)
+	 * und die noch nicht bewertet wurden
 	 * 
 	 * Hilfsmethode um anschließend ein Rating auf eine Party abzusetzen
 	 * 

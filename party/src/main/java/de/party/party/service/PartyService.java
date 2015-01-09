@@ -170,11 +170,32 @@ public class PartyService {
 		if (ranking == null) {
 			return ranking;
 		}
-		
+						
 		em.persist(ranking);
 		
 		return ranking;
 		
+	}
+
+	public Double getRatingToParty(Party party) {
+		
+		//Ranking-Objekt zu dieser Party auslesen
+		final List<Ranking> rankings = em.createNamedQuery(Ranking.FIND_RANKINGS_TO_PARTY, Ranking.class)
+																  .setParameter(Ranking.PARTY_PARAM, party)
+																  .getResultList();
+		//Wenn noch kein Ranking vorhanden, gib null zurück
+		if(rankings == null || rankings.isEmpty()) {
+			return new Double(0);
+		}
+		double sum = 0;
+		int anzahl = rankings.size();
+		
+		for (Ranking ranking : rankings) {
+			sum += ranking.getRating();
+		}
+		
+		//Ergebnis abrunden um nur ganzzahlige Ratings darzustellen
+		return sum/anzahl;
 	}
 
 	

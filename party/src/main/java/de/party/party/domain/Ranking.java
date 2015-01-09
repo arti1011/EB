@@ -8,6 +8,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQuery;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -21,9 +22,19 @@ import static de.party.util.Constants.KEINE_ID;
 @Table(uniqueConstraints=
 	@UniqueConstraint(columnNames = {"party_fk", "nutzer_fk"})) 
 @XmlRootElement
+@NamedQuery(name = Ranking.FIND_RANKINGS_TO_PARTY, query = 
+				"SELECT r"
+			+	" FROM Ranking r"
+			+	" WHERE r.party =:" + Ranking.PARTY_PARAM)
 public class Ranking implements Serializable{
 
 	private static final long serialVersionUID = 4197686411819694662L;
+	
+	//Queries
+	public static final String FIND_RANKINGS_TO_PARTY = "findRankingsToParty";
+	
+	//Params
+	public static final String PARTY_PARAM = "party";
 	
 	@Id
 	@GeneratedValue
@@ -38,12 +49,12 @@ public class Ranking implements Serializable{
 	private Party party;
 	
 	@Column
-	private int rating;
+	private Double rating;
 
 	@Column
 	private String kommentar;
 	
-	public Ranking(Party party, Nutzer nutzer, int rating, String kommentar) {
+	public Ranking(Party party, Nutzer nutzer, Double rating, String kommentar) {
 		this.party = party;
 		this.teilnehmer = nutzer;
 		this.rating = rating;
@@ -80,11 +91,11 @@ public class Ranking implements Serializable{
 		this.party = party;
 	}
 
-	public int getRating() {
+	public Double getRating() {
 		return rating;
 	}
 
-	public void setRating(int rating) {
+	public void setRating(Double rating) {
 		this.rating = rating;
 	}
 
