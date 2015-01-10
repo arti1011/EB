@@ -18,6 +18,7 @@ import de.party.nutzer.domain.Freundschaft;
 import de.party.nutzer.domain.Nutzer;
 import de.party.nutzer.domain.Adresse;
 import de.party.nutzer.domain.ProfilePicture;
+import de.party.party.domain.FreundeHolder;
 import de.party.party.domain.Party;
 import de.party.party.domain.StatusType;
 import static de.party.util.Constants.DEFAULT_PICTURE;
@@ -369,6 +370,24 @@ public class NutzerService {
 		
 		
 		
+		
+	}
+	
+	public FreundeHolder findPartyFreundeListenById(Party party) {
+		
+		FreundeHolder holder = new FreundeHolder();
+		
+		List<Nutzer> zugesagt = findZugesagteTeilnehmerByParty(party);
+		List<Nutzer> abgesagt = findAbgesagteTeilnehmerByParty(party);
+		List<Nutzer> eingeladen = findEingeladeneTeilnehmerByParty(party);
+
+		
+		holder.setZugesagt(zugesagt);
+		holder.setAbgesagt(abgesagt);
+		holder.setEingeladen(eingeladen);
+	
+
+		return holder;
 		
 	}
 

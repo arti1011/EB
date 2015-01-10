@@ -11,10 +11,12 @@ import javax.ws.rs.BadRequestException;
 
 
 
+
 import de.party.nutzer.domain.Nutzer;
 import de.party.party.domain.Party;
 import de.party.party.domain.ListenHolder;
 import de.party.item.domain.PartyItem;
+import de.party.party.domain.FreundeHolder;
 import de.party.party.domain.PartyTeilnahme;
 import de.party.party.domain.Ranking;
 import de.party.party.domain.StatusType;
@@ -324,6 +326,9 @@ public class PartyService {
 		return holder;
 		
 	}
+	
+
+
 
 	
 

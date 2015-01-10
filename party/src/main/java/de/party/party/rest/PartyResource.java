@@ -22,6 +22,7 @@ import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import static javax.ws.rs.core.MediaType.APPLICATION_XML;
 import de.party.nutzer.domain.Nutzer;
 import de.party.nutzer.service.NutzerService;
+import de.party.party.domain.FreundeHolder;
 import de.party.party.domain.Party;
 import de.party.party.domain.ListenHolder;
 import de.party.item.domain.PartyItem;
@@ -96,12 +97,32 @@ public class PartyResource {
 	
 	@GET
 	@Path("{id:[1-9][0-9]*}/listen")
-	public Response findPartyListenById(@PathParam("id") Long id) {
+	public Response findPartyListenByUserId(@PathParam("id") Long id) {
 		
 		
 		final Nutzer nutzer = ns.findNutzerById(id);
 		
 		final ListenHolder holder = ps.findPartyListenById(nutzer);
+		
+		
+		if (holder == null) {
+			throw new BadRequestException("Es wurde keine Liste gefunden");
+			
+		}
+		
+		
+		return Response.ok(holder).build();
+	}
+	
+	
+	@GET
+	@Path("{id:[1-9][0-9]*}/listenteilnehmer")
+	public Response findPartyListenTeilnehmerByUserId(@PathParam("id") Long id) {
+		
+		
+		final Party party = ps.findPartyById(id);
+		
+		final FreundeHolder holder = ns.findPartyFreundeListenById(party);
 		
 		
 		if (holder == null) {
