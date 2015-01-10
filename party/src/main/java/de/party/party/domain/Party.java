@@ -1,7 +1,9 @@
 package de.party.party.domain;
 
+import static de.party.util.Constants.KEINE_ID;
+import static javax.persistence.TemporalType.TIMESTAMP;
+
 import java.io.Serializable;
-import java.net.URI;
 import java.util.Date;
 import java.util.List;
 
@@ -18,20 +20,12 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
-import javax.persistence.Transient;
 import javax.validation.constraints.Future;
 import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
-
-
-
-
-
 import de.party.nutzer.domain.Nutzer;
-import static de.party.util.Constants.KEINE_ID;
-import static javax.persistence.TemporalType.TIMESTAMP;
 
 
 @Entity
@@ -70,7 +64,15 @@ import static javax.persistence.TemporalType.TIMESTAMP;
 					+	" JOIN p.teilnehmer t"
 					+	" WHERE t.teilnehmer = :"+ Party.PARAM_TEILNEHMER
 					+	" AND t.status = :" + Party.PARAM_STATUS
-					+	" AND CURRENT_TIMESTAMP < p.datum")
+					+	" AND CURRENT_TIMESTAMP < p.datum"),
+	@NamedQuery(name = Party.FIND_ATTENDED_PARTIES_BY_NUTZER, query = 
+						"SELECT p"
+					+	" FROM Party p"
+					+	" JOIN p.teilnehmer t"
+					+	" WHERE t.teilnehmer = :"+ Party.PARAM_TEILNEHMER
+					+	" AND t.status = :" + Party.PARAM_STATUS
+					+	" AND CURRENT_TIMESTAMP > p.datum"
+					)					
 })
 public class Party implements Serializable {
 
@@ -91,6 +93,8 @@ public class Party implements Serializable {
 
 	public static final String FIND_ZUGESAGTE_PARTIES_BY_NUTZER = PREFIX + "findZugesagtePartiesByNutzer";
 	public static final String FIND_ABGESAGTE_PARTIES_BY_NUTZER = PREFIX + "findAbgesagtePartiesByNutzer";
+
+	public static final String FIND_ATTENDED_PARTIES_BY_NUTZER = "findAttendedPartiesByNutzer";
 	
 	
 	@Id
@@ -132,6 +136,9 @@ public class Party implements Serializable {
 	@OneToMany(mappedBy="party", cascade = CascadeType.PERSIST)
 	private List<PartyTeilnahme> teilnehmer;
 	
+	@OneToMany(mappedBy="party")
+	private List<Ranking> rankings;
+
 	
 //	@ManyToMany(mappedBy = "parties")
 //	private List<Nutzer> teilnehmer;
@@ -253,6 +260,16 @@ public class Party implements Serializable {
 
 	public void setNutzer(List<Nutzer> nutzer) {
 		this.nutzer = nutzer;
+	}
+
+	
+	@XmlTransient
+	public List<Ranking> getRankings() {
+		return rankings;
+	}
+
+	public void setRankings(List<Ranking> rankings) {
+		this.rankings = rankings;
 	}
 
 	public void zusagen(Party party){

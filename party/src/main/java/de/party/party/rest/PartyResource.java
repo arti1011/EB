@@ -1,6 +1,5 @@
 package de.party.party.rest;
 
-import java.net.URI;
 import java.util.List;
 
 import javax.enterprise.context.RequestScoped;
@@ -25,6 +24,7 @@ import de.party.nutzer.domain.Nutzer;
 import de.party.nutzer.service.NutzerService;
 import de.party.party.domain.Party;
 import de.party.item.domain.PartyItem;
+import de.party.party.domain.Ranking;
 import de.party.party.service.PartyService;
 import de.party.util.rest.NotFoundException;
 import static de.party.util.Constants.KEINE_ID;
@@ -283,7 +283,24 @@ public class PartyResource {
 		
 		
 	}
-	
+	/**
+	 * Eine Party bewerten
+	 * 
+	 * 
+	 * @param ranking
+	 * @return
+	 */
+	@POST
+	@Path("/bewerten")
+	@Consumes(APPLICATION_JSON)
+	@Transactional
+	public Response rateParty(Ranking ranking) {
+		//ID zurücksetzen
+		ranking.setId(KEINE_ID);
+		
+		ranking = ps.bewerteParty(ranking);
+		return Response.created(null).build();
+	}
 	
 	@PUT
 	@Path("{id:[1-9][0-9]*}/addeinkaufliste")
@@ -348,5 +365,20 @@ public class PartyResource {
 
 	}
 	
-}	
+
+
+	@GET
+	@Path("{id:[1-9][0-9]*}/rating")
+	public Response getRatingToPartyId(@PathParam("id") Long id) {
+		
+		//Party-Objekt ermitteln
+		final Party party = ps.findPartyById(id);
+		
+		final Double rating = ps.getRatingToParty(party);
+		
+		return Response.ok(rating).build();
+	}
+	
+	
+}
 

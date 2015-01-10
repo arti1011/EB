@@ -34,6 +34,7 @@ import de.party.nutzer.domain.Nutzer;
 import de.party.nutzer.domain.ProfilePicture;
 import de.party.nutzer.service.NutzerService;
 import de.party.party.domain.Party;
+import de.party.party.domain.Ranking;
 import de.party.party.service.PartyService;
 import de.party.util.rest.NotFoundException;
 
@@ -580,5 +581,32 @@ public class NutzerResource {
 		
 		return Response.noContent().build();
 	}
+	
+	/**
+	 * Alle Parties anzeigen an denen der User teilgenommen hat
+	 * 
+	 * Es werden nur die Parties ausgelesen, die schon stattgefunden habe (Datum=in der Vergangenheit)
+	 * und die noch nicht bewertet wurden
+	 * 
+	 * Hilfsmethode um anschließend ein Rating auf eine Party abzusetzen
+	 * 
+	 * @param nutzerId
+	 * @return
+	 */
+	@GET
+	@Path("{id:[1-9][0-9]*}/PartiesIAttended")
+	public Response findAttendedPartiesyNutzerId(@PathParam("id") Long nutzerId) {
+		final Nutzer nutzer = ns.findNutzerById(nutzerId);
+		
+				
+		final List<Party> parties = ps.findPartiesIAttendedByNutzer(nutzer);
+		
+		
+		
+		return Response.ok(parties).build();
+		
+	}
+	
+	
 	
 }

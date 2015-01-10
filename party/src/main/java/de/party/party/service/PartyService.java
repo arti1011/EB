@@ -15,6 +15,7 @@ import de.party.nutzer.domain.Nutzer;
 import de.party.party.domain.Party;
 import de.party.item.domain.PartyItem;
 import de.party.party.domain.PartyTeilnahme;
+import de.party.party.domain.Ranking;
 import de.party.party.domain.StatusType;
 
 public class PartyService {
@@ -251,6 +252,52 @@ public class PartyService {
 		PartyItem item = em.find(PartyItem.class, id);
 		return item;
 		
+	}
+
+	public List<Party> findPartiesIAttendedByNutzer(Nutzer nutzer) {
+		if (nutzer == null) {
+			return Collections.emptyList();
+		}
+		final List<Party> partiesIAttended = em.createNamedQuery(Party.FIND_ATTENDED_PARTIES_BY_NUTZER, Party.class)
+																	   .setParameter(Party.PARAM_TEILNEHMER, nutzer)
+																	   .setParameter(Party.PARAM_STATUS, StatusType.ZUSAGE)
+																	   .getResultList();
+		
+		
+		return partiesIAttended;
+	}
+
+	public Ranking bewerteParty(Ranking ranking) {
+		
+		if (ranking == null) {
+			return ranking;
+		}
+						
+		em.persist(ranking);
+		
+		return ranking;
+		
+	}
+
+	public Double getRatingToParty(Party party) {
+		
+		//Ranking-Objekt zu dieser Party auslesen
+		final List<Ranking> rankings = em.createNamedQuery(Ranking.FIND_RANKINGS_TO_PARTY, Ranking.class)
+																  .setParameter(Ranking.PARTY_PARAM, party)
+																  .getResultList();
+		//Wenn noch kein Ranking vorhanden, gib null zurück
+		if(rankings == null || rankings.isEmpty()) {
+			return new Double(0);
+		}
+		double sum = 0;
+		int anzahl = rankings.size();
+		
+		for (Ranking ranking : rankings) {
+			sum += ranking.getRating();
+		}
+		
+		//Ergebnis abrunden um nur ganzzahlige Ratings darzustellen
+		return sum/anzahl;
 	}
 
 	
