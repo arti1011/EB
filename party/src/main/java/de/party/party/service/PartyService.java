@@ -13,6 +13,7 @@ import javax.ws.rs.BadRequestException;
 
 import de.party.nutzer.domain.Nutzer;
 import de.party.party.domain.Party;
+import de.party.party.domain.ListenHolder;
 import de.party.item.domain.PartyItem;
 import de.party.party.domain.PartyTeilnahme;
 import de.party.party.domain.Ranking;
@@ -298,6 +299,30 @@ public class PartyService {
 		
 		//Ergebnis abrunden um nur ganzzahlige Ratings darzustellen
 		return sum/anzahl;
+	}
+	
+	public ListenHolder findPartyListenById(Nutzer nutzer) {
+		
+		ListenHolder holder = new ListenHolder();
+		
+		List<Party> meinePartys = findOpenPartiesByNutzer(nutzer);
+		List<Party> offeneEinladungen = findOffeneEinladungenByNutzer(nutzer);
+		List<Party> ichNehmeTeil = findZugesagtePartiesByNutzer(nutzer);
+		List<Party> abgesagtNochOffen = findAbgesagtePartiesByNutzer(nutzer);
+		List<Party> ichHabeTeilgenommen = findPartiesIAttendedByNutzer(nutzer);
+		List<Party> toRate = null;
+		List<Party> meinePartysVergangenheit = findClosedPartiesByNutzer(nutzer);
+		
+		holder.setMeinepartys(meinePartys);
+		holder.setOffene(offeneEinladungen);
+		holder.setIchnehmeteil(ichNehmeTeil);
+		holder.setAbgesagtnochzukunft(abgesagtNochOffen);
+		holder.setIchhabeteilgenommen(ichHabeTeilgenommen);
+		holder.setTorate(toRate);
+		holder.setMeinepartysvergangen(meinePartysVergangenheit);
+
+		return holder;
+		
 	}
 
 	

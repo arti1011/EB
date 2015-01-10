@@ -23,6 +23,7 @@ import static javax.ws.rs.core.MediaType.APPLICATION_XML;
 import de.party.nutzer.domain.Nutzer;
 import de.party.nutzer.service.NutzerService;
 import de.party.party.domain.Party;
+import de.party.party.domain.ListenHolder;
 import de.party.item.domain.PartyItem;
 import de.party.party.domain.Ranking;
 import de.party.party.service.PartyService;
@@ -92,6 +93,27 @@ public class PartyResource {
 		
 		return Response.ok(items).build();
 	}
+	
+	@GET
+	@Path("{id:[1-9][0-9]*}/listen")
+	public Response findPartyListenById(@PathParam("id") Long id) {
+		
+		
+		final Nutzer nutzer = ns.findNutzerById(id);
+		
+		final ListenHolder holder = ps.findPartyListenById(nutzer);
+		
+		
+		if (holder == null) {
+			throw new BadRequestException("Es wurde keine Liste gefunden");
+			
+		}
+		
+		
+		return Response.ok(holder).build();
+	}
+	
+	
 	
 	@GET
 	@Path("{id:[1-9][0-9]*}/einkaufliste/ichbringe/{userId:[1-9][0-9]*}")
