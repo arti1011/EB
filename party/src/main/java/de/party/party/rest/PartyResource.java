@@ -20,9 +20,11 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
+import static javax.ws.rs.core.MediaType.APPLICATION_XML;
 import de.party.nutzer.domain.Nutzer;
 import de.party.nutzer.service.NutzerService;
 import de.party.party.domain.Party;
+import de.party.item.domain.PartyItem;
 import de.party.party.service.PartyService;
 import de.party.util.rest.NotFoundException;
 import static de.party.util.Constants.KEINE_ID;
@@ -74,6 +76,52 @@ public class PartyResource {
 		uriHelperParty.updateUriParty(party, uriInfo);
 		
 		return Response.ok(party).build();
+	}
+	
+	@GET
+	@Path("{id:[1-9][0-9]*}/einkaufliste/offen")
+	public Response findPartyItemsById(@PathParam("id") Long id) {
+		
+		final List<PartyItem> items = ps.findPartyItemsById(id);
+		
+		
+		if (items == null || items.isEmpty()) {
+			throw new BadRequestException("Es wurden keine Items gefunden");
+		}
+		
+		
+		return Response.ok(items).build();
+	}
+	
+	@GET
+	@Path("{id:[1-9][0-9]*}/einkaufliste/ichbringe/{userId:[1-9][0-9]*}")
+	public Response findPartyItemsById(@PathParam("id") Long id, @PathParam("userId") Long userId) {
+		
+		final List<PartyItem> items = ps.findPartyItemsByMitbringerId(id, userId);
+		
+		
+		if (items == null || items.isEmpty()) {
+			throw new BadRequestException("Es wurden keine Items gefunden");
+		}
+		
+		
+		return Response.ok(items).build();
+	}
+	
+	
+	@GET
+	@Path("{id:[1-9][0-9]*}/einkaufliste/werbringtwas")
+	public Response findPartyItemsByIdOwner(@PathParam("id") Long id) {
+		
+	final List<PartyItem> items = ps.findPartyItemsByIdOwner(id);
+		
+		
+		if (items == null || items.isEmpty()) {
+			throw new BadRequestException("Es wurden keine Items gefunden");
+		}
+		
+		
+		return Response.ok(items).build();
 	}
 	
 	/**
@@ -178,7 +226,7 @@ public class PartyResource {
 	 */
 	@POST
 	@Consumes(APPLICATION_JSON)
-	@Produces
+	@Produces({APPLICATION_JSON, APPLICATION_XML})
 	public Response createParty(@Valid Party party, List<Nutzer> teilnehmer) {
 		
 		// ID zurücksetzen
@@ -188,9 +236,9 @@ public class PartyResource {
 		
 		
 				
-		final URI partyUri = uriHelperParty.getUriParty(party, uriInfo);
+		//final URI partyUri = uriHelperParty.getUriParty(party, uriInfo);
 		
-		return Response.created(partyUri).build();
+		return Response.ok(party).build();
 		
 	}
 	
@@ -231,10 +279,74 @@ public class PartyResource {
 		
 		
 				
-		return Response.noContent().build();
+		return Response.ok("1").build();
 		
 		
 	}
 	
 	
+	@PUT
+	@Path("{id:[1-9][0-9]*}/addeinkaufliste")
+	@Consumes(APPLICATION_JSON)
+	@Produces
+	@Transactional
+	public Response addEinkauflisteToParty(@PathParam("id") Long partyId, List<PartyItem> items) {
+		
+		// Party-Objekt auslesen
+		final Party party = ps.findPartyById(partyId);
+		if (party == null) {
+			throw new NotFoundException(NOT_FOUND_PARTY, partyId);
+		}
+		if (items == null || items.isEmpty()) {
+			throw new BadRequestException("Es wurden keine Items zum einkaufen übergeben");
+	
+		}
+		
+		for(PartyItem i : items) {
+			
+			i.setParty_fk(party.getId());
+			
+		}
+		
+					
+	
+				ps.addEinkauflisteToParty(items);
+		
+		
+		
+				
+		return Response.ok("1").build();
+		
+		
 	}
+	
+	
+	@PUT
+	@Path("{id:[1-9][0-9]*}/mitbringen")
+	@Consumes(APPLICATION_JSON)
+	@Produces
+	@Transactional
+	public Response mitbringenToParty(@PathParam("id") Long userId, List<PartyItem> items) {
+		
+		// Party-Objekt auslesen
+		final Nutzer user = ns.findNutzerById(userId);
+		if (user == null) {
+			throw new NotFoundException(NOT_FOUND_PARTY, userId);
+		}
+		if (items == null || items.isEmpty()) {
+			throw new BadRequestException("Es wurden keine Items zum mitbringen übergeben");
+	
+		}
+		
+		String mitbringer = user.getVorname()+" "+user.getNachname();
+		Long mitbringer_fk = user.getId();
+		
+		ps.mitbringenToParty(mitbringer, mitbringer_fk, items);
+
+				
+		return Response.ok("1").build();
+
+	}
+	
+}	
+

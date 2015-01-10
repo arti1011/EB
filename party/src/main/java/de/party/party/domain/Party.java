@@ -30,7 +30,6 @@ import javax.xml.bind.annotation.XmlTransient;
 
 
 import de.party.nutzer.domain.Nutzer;
-import de.party.item.domain.PartyItem;
 import static de.party.util.Constants.KEINE_ID;
 import static javax.persistence.TemporalType.TIMESTAMP;
 
@@ -119,6 +118,12 @@ public class Party implements Serializable {
 	@NotNull(message = "{party.veranstalter.notNull}")
 	private Nutzer veranstalter;
 	
+	@Column
+	private String longitude;
+	
+	@Column
+	private String latitude;
+	
 	
 	@OneToMany(mappedBy="partis")
 	private List<Nutzer> nutzer;
@@ -127,8 +132,6 @@ public class Party implements Serializable {
 	@OneToMany(mappedBy="party", cascade = CascadeType.PERSIST)
 	private List<PartyTeilnahme> teilnehmer;
 	
-	@OneToMany(mappedBy="party", cascade = CascadeType.ALL)
-	private List<PartyItem> partyitems;
 	
 //	@ManyToMany(mappedBy = "parties")
 //	private List<Nutzer> teilnehmer;
@@ -215,15 +218,7 @@ public class Party implements Serializable {
 		this.teilnehmer = teilnehmer;
 	}
 	
-	
-	@XmlTransient
-	public List<PartyItem> getPartyitems() {
-		return partyitems;
-	}
 
-	public void setPartyitems(List<PartyItem> partyitems) {
-		this.partyitems = partyitems;
-	}
 
 	
 //	public URI getEinladungenUri() {
@@ -264,6 +259,35 @@ public class Party implements Serializable {
 		
 		
 	}
+
+	public String getLongitude() {
+		return longitude;
+	}
+
+	public void setLongitude(String longitude) {
+		this.longitude = longitude;
+	}
+
+	public String getLatitude() {
+		return latitude;
+	}
+
+	public void setLatitude(String latitude) {
+		this.latitude = latitude;
+	}
+
+	@Override
+	public String toString() {
+		return "Party [id=" + id + ", titel=" + titel + ", beschreibung="
+				+ beschreibung + ", datum=" + datum + ", uhrzeit=" + uhrzeit
+				+ ", veranstalter=" + veranstalter + ", longitude=" + longitude
+				+ ", latitude=" + latitude + ", nutzer=" + nutzer
+				+ ", teilnehmer=" + teilnehmer +  "]";
+	}
+	
+	
+	
+	
 	
 	
 

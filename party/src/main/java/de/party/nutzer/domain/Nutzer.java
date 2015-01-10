@@ -2,17 +2,15 @@ package de.party.nutzer.domain;
 
 
 
-import static javax.persistence.TemporalType.TIMESTAMP;
-import static javax.persistence.CascadeType.REMOVE;
+import static de.party.util.Constants.DEFAULT_PICTURE;
+import static de.party.util.Constants.KEINE_ID;
 import static javax.persistence.CascadeType.PERSIST;
+import static javax.persistence.CascadeType.REMOVE;
+import static javax.persistence.TemporalType.TIMESTAMP;
 
 import java.io.Serializable;
-import java.net.URI;
 import java.util.Date;
 import java.util.List;
-
-
-
 
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
@@ -20,6 +18,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
@@ -29,18 +28,15 @@ import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
-import javax.persistence.Transient;
 import javax.persistence.Version;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
+import de.party.item.domain.ItemMitbringer;
 import de.party.party.domain.Party;
 import de.party.party.domain.PartyTeilnahme;
-import de.party.item.domain.ItemMitbringer;
-import static de.party.util.Constants.KEINE_ID;
-import static de.party.util.Constants.DEFAULT_PICTURE;
 
 
 
@@ -62,7 +58,7 @@ import static de.party.util.Constants.DEFAULT_PICTURE;
 									+ " FROM Nutzer n"
 									+ " WHERE UPPER (n.nachname) LIKE :" + Nutzer.NACHNAME_QUERY_PARAM),
 	@NamedQuery(name = Nutzer.FIND_FRIENDS_BY_ID,
-						query = "SELECT DISTINCT n"
+						query = "SELECT n"
 								+ " FROM Nutzer n  LEFT JOIN FETCH n.myFriends"
 								+ " WHERE n.id = :" + Nutzer.ID_QUERY_PARAM),
 	@NamedQuery(name = Nutzer.FIND_EINGELADENE_TEILNEHMER_BY_PARTY, 
@@ -72,19 +68,19 @@ import static de.party.util.Constants.DEFAULT_PICTURE;
 					   			+	" WHERE p.party =:" + Nutzer.PARAM_PARTY
 					   			+ 	" AND p.status =:" + Nutzer.PARAM_TEILNAHME_STATUS),
 	@NamedQuery(name = Nutzer.FIND_MY_FRIENDS_BY_NUTZER, 
-						query = "SELECT DISTINCT n"
+						query = "SELECT n"
 							   + " FROM Nutzer n"
 							   + " JOIN n.myFriends f"
 							   + " WHERE f.friend =:" + Nutzer.PARAM_NUTZER),
 	@NamedQuery(name = Nutzer.FIND_NUTZER_I_AM_FRIEND_OF, 
-						query = "SELECT DISTINCT n"
+						query = "SELECT n"
 								+ " FROM Nutzer n"
 								+ " JOIN n.friendOf f"
 								+ " WHERE f.owner =:" + Nutzer.PARAM_NUTZER)
 	
 })
 @XmlRootElement
-public class Nutzer implements Serializable {
+public class Nutzer implements Serializable, Comparable<Nutzer> {
 	private static final long serialVersionUID = 4618817696314640065L;
 	
 	// Query Parameter
@@ -123,6 +119,10 @@ public class Nutzer implements Serializable {
 	@NotNull
 	private Long picture_id = DEFAULT_PICTURE;
 	
+	@Lob
+	@Column(nullable = true)
+	private String imageDataStringSmall;
+	
 	@ManyToOne
 	private Party partis;
 
@@ -159,8 +159,17 @@ public class Nutzer implements Serializable {
 	@Column(nullable = false)
 	@NotNull(message = "{nutzerverwaltung.vorname.notNull}")
 	private String vorname;	
-	
 		
+	public String getImageDataStringSmall() {
+		return imageDataStringSmall;
+	}
+
+	public void setImageDataStringSmall(String imageDataStringSmall) {
+		this.imageDataStringSmall = imageDataStringSmall;
+	}
+
+
+
 	@Version
 	@Basic(optional = false)
 	private int version = 1;
@@ -182,6 +191,7 @@ public class Nutzer implements Serializable {
 
 	@OneToOne(cascade = {PERSIST, REMOVE}, mappedBy = "nutzer")
 	private Adresse adresse;
+	
 	
 //	@Transient
 //	private URI meinePartyEinladungenUri;
@@ -491,6 +501,21 @@ public class Nutzer implements Serializable {
 				+ nachname + ", vorname=" + vorname + ", password=" + password
 				+ ", aktualisiert=" + aktualisiert + "]";
 	}
+	
+	  @Override
+	  public int compareTo(Nutzer b) {
+	    if (b.getNachname() == null && this.getNachname() == null) {
+	      return 0;
+	    }
+	    if (this.getNachname() == null) {
+	      return 1;
+	    }
+	    if (b.getNachname() == null) {
+	      return -1;
+	    }
+	    return this.getNachname().compareTo(b.getNachname());
+	  }
+	
 
 	
 

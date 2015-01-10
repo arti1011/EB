@@ -2,6 +2,7 @@ package de.party.party.service;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.ArrayList;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -9,8 +10,10 @@ import javax.ws.rs.BadRequestException;
 
 
 
+
 import de.party.nutzer.domain.Nutzer;
 import de.party.party.domain.Party;
+import de.party.item.domain.PartyItem;
 import de.party.party.domain.PartyTeilnahme;
 import de.party.party.domain.StatusType;
 
@@ -147,6 +150,106 @@ public class PartyService {
 		
 		em.persist(partyTeilnahme);
 		
+		
+	}
+	
+	public void addEinkauflisteToParty(List<PartyItem> items) {
+		
+		
+		for(PartyItem i : items) {
+			em.persist(i);
+			
+		}
+		
+		
+	}
+	
+	public List<PartyItem> findPartyItemsById(Long id) {
+
+		
+		List<PartyItem> list = em.createQuery(
+			    "SELECT p FROM PartyItem p WHERE p.party_fk LIKE :partyFK AND p.mitbringer IS NULL")
+			    .setParameter("partyFK", id)
+			    .getResultList();
+		
+		
+		
+		return list;
+		
+		
+	}
+	
+	
+	public List<PartyItem> findPartyItemsByIdOwner(Long id) {
+		
+		List<PartyItem> list = em.createQuery(
+			    "SELECT p FROM PartyItem p WHERE p.party_fk LIKE :partyFK AND p.mitbringer IS NOT NULL")
+			    .setParameter("partyFK", id)
+			    .getResultList();
+		
+		
+		
+		return list;
+		
+		
+	}
+	
+	public List<PartyItem> findPartyItemsByMitbringerId(Long partyId, Long userId) {
+		
+		List<PartyItem> list = em.createQuery(
+			    "SELECT p FROM PartyItem p WHERE p.party_fk LIKE :partyFK AND p.mitbringer_fk LIKE :userFK")
+			    .setParameter("partyFK", partyId)
+			    .setParameter("userFK", userId)
+			    .getResultList();
+		
+		
+		
+		return list;
+		
+		
+	}
+	
+	
+	
+	public void mitbringenToParty(String mitbringer, Long mitbringer_fk, List<PartyItem> items) {
+		
+
+		for (PartyItem item : items) {
+			em.detach(item);
+			final PartyItem persistentesItem = findItemById(item.getId());
+			if (persistentesItem != null) {
+				
+				
+				persistentesItem.setMitbringer(mitbringer);
+				persistentesItem.setMitbringer_fk(mitbringer_fk);
+				em.merge(persistentesItem);
+				
+				
+			
+			}
+		}
+	
+		
+		
+	
+			
+			
+		
+		
+		
+		
+		
+		
+		
+	}
+	
+	
+	public PartyItem findItemById(Long id) {
+		if(id == null) {
+			return null;
+		}
+		PartyItem item = em.find(PartyItem.class, id);
+		return item;
 		
 	}
 

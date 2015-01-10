@@ -1,8 +1,10 @@
 package de.party.nutzer.domain;
 
+import static de.party.util.Constants.KEINE_ID;
+import static javax.persistence.TemporalType.TIMESTAMP;
+
 import java.io.Serializable;
 import java.util.Date;
-
 
 import javax.persistence.Basic;
 import javax.persistence.Column;
@@ -12,13 +14,10 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.PrePersist;
+import javax.persistence.PreUpdate;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.xml.bind.annotation.XmlTransient;
-
-
-import static javax.persistence.TemporalType.TIMESTAMP;
-import static de.party.util.Constants.KEINE_ID;
 
 @Entity
 @Table
@@ -76,6 +75,12 @@ public class Adresse implements Serializable {
 		erzeugt = new Date();
 		aktualisiert = new Date();
 	}
+	
+	@PreUpdate
+	private void preUpdate() {
+		aktualisiert = new Date();
+	}
+
 
 	public Long getId() {
 		return id;

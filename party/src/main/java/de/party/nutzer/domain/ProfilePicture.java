@@ -27,6 +27,10 @@ public class ProfilePicture implements Serializable {
 	@Lob
 	@Column(nullable = false)
 	private String imageDataString; 
+	
+	@Lob
+	@Column(nullable = false)
+	private String imageDataStringSmall; 
 
 	@Column(nullable = false)
 	@Temporal(TIMESTAMP)
@@ -37,9 +41,9 @@ public class ProfilePicture implements Serializable {
 	}
 	
 
-	public ProfilePicture(String imageDataString, Long user_id) {
+	public ProfilePicture(String imageDataString, String imageDataStringSmall, Long user_id) {
 		super();
-		set(imageDataString, user_id);
+		set(imageDataString, user_id, imageDataStringSmall);
 	}
 
 	@PrePersist
@@ -47,16 +51,28 @@ public class ProfilePicture implements Serializable {
 		erzeugt = new Date();
 	}
 	
-	public final void set(String imageDataString, Long userid) {
+	public final void set(String imageDataString, Long userid, String imageDataStringSmall) {
 		
 		setImageDataString(imageDataString);
 		setUser_id(userid);
+		setImageDataStringSmall(imageDataStringSmall);
 		
 		
 	}
 
 	public String getImageDataString() {
 		return imageDataString;
+	}
+
+	
+
+	public String getImageDataStringSmall() {
+		return imageDataStringSmall;
+	}
+
+
+	public void setImageDataStringSmall(String imageDataStringSmall) {
+		this.imageDataStringSmall = imageDataStringSmall;
 	}
 
 

@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.HashSet;
 
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
@@ -15,6 +16,7 @@ import com.google.common.base.Strings;
 
 import de.party.nutzer.domain.Freundschaft;
 import de.party.nutzer.domain.Nutzer;
+import de.party.nutzer.domain.Adresse;
 import de.party.nutzer.domain.ProfilePicture;
 import de.party.party.domain.Party;
 import de.party.party.domain.StatusType;
@@ -43,6 +45,39 @@ public class NutzerService {
 		
 		return nutzer;
 	}
+	
+	public Nutzer updateUser(Nutzer nutzer) {
+
+		if (nutzer == null) {
+			return null;
+		}
+		Long id = nutzer.getId();
+		Long adid = nutzer.getAdresse().getId();
+		em.detach(nutzer);
+		
+		Adresse tmpad = em.find(Adresse.class, adid);
+		Nutzer tmp = em.find(Nutzer.class, id);
+		if(tmp == null) {
+			return null;
+		}
+		
+		tmpad.setStrasse(nutzer.getAdresse().getStrasse());
+		tmpad.setHausnr(nutzer.getAdresse().getHausnr());
+		tmpad.setOrt(nutzer.getAdresse().getOrt());
+		tmpad.setPlz(nutzer.getAdresse().getPlz());
+		
+		tmp.setAdresse(tmpad);
+
+	
+	
+		nutzer = em.merge(tmp);
+		
+		return nutzer;
+	}
+	
+	
+	
+	
 
 	
 	public Nutzer findNutzerByEmail(String email) {
@@ -171,6 +206,7 @@ public class NutzerService {
 		
 		Nutzer user = findNutzerById(pp.getUser_id());
 		user.setPicture_id(pp.getUser_id());
+		user.setImageDataStringSmall(pp.getImageDataStringSmall());
 		
 		ProfilePicture tmp = null;
 
@@ -205,15 +241,21 @@ public class NutzerService {
 				.getResultList());
 		
 		List<Nutzer> friends = new ArrayList<Nutzer>();
+		ArrayList<Long> friendsids = new ArrayList<Long>();
 		
 		for (Freundschaft freund : queryResult) {
 			
 			Nutzer nutzer = findNutzerById(freund.getFriend().getId());
-			friends.add(nutzer);
+			if(! friendsids.contains(nutzer.getId())){
+				friends.add(nutzer);
+				friendsids.add(nutzer.getId());
+			}
+			
 		}
 		
+
+		Collections.sort(friends);
 		
-				
 		
 //		myFriends = nutzer.getMyFriends();
 		

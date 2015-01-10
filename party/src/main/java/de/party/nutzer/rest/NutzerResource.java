@@ -21,6 +21,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
 
+
 import org.jboss.logging.Logger;
 
 import com.google.common.base.Strings;
@@ -28,6 +29,7 @@ import com.google.common.base.Strings;
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import static javax.ws.rs.core.MediaType.APPLICATION_XML;
 import static javax.ws.rs.core.MediaType.TEXT_PLAIN;
+import de.party.nutzer.domain.Adresse;
 import de.party.nutzer.domain.Nutzer;
 import de.party.nutzer.domain.ProfilePicture;
 import de.party.nutzer.service.NutzerService;
@@ -217,10 +219,10 @@ public class NutzerResource {
 //		final List<Freundschaft> myFriendsRelation = ns.findFriendsByNutzer(nutzer);
 		
 		// URL für die Freunde der Freunde..
-		for (Nutzer freund : freunde) {
+		/*for (Nutzer freund : freunde) {
 			uriHelperNutzer.updateUriNutzer(freund, uriInfo);
 			
-		}
+		} */
 		
 		return Response.ok(freunde).build();
 	}
@@ -233,7 +235,14 @@ public class NutzerResource {
 		
 		Nutzer requester = ns.addFriend(nutzer_id, friend_ids);
 		
-		return Response.ok(requester).build();
+		if(requester == null)
+		{
+			throw new NotFoundException(NOT_FOUND_USER);
+		}
+		
+		Long id = friend_ids[0];
+		
+		return Response.ok(id).build();
 		
 	}
 	
@@ -281,6 +290,27 @@ public class NutzerResource {
 		
 	}
 	
+	
+	
+	@PUT
+	@Consumes(APPLICATION_JSON)
+	@Produces({APPLICATION_JSON, APPLICATION_XML})
+	@Transactional
+	public Response updateUser(Nutzer nutzer) {
+		
+				
+		nutzer = ns.updateUser(nutzer);
+		if (nutzer == null) {
+			throw new NotFoundException(NOT_FOUND_USER);
+		}
+	
+		return Response.ok(nutzer).build();
+				
+				
+		
+	}
+	
+	
 	@GET
 	@Path("/profilepicture/{id:[1-9][0-9]*}")
 	public Response getProfilePicture(@PathParam("id") Long id) {
@@ -296,6 +326,8 @@ public class NutzerResource {
 		
 		return Response.ok(profilepicture).build();
 	}
+	
+	
 	
 	@POST
 	@Path("/profilepicture")
