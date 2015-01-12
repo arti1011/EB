@@ -26,7 +26,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
 import de.party.nutzer.domain.Nutzer;
-import de.party.item.domain.PartyItem;
 
 
 @Entity
@@ -138,9 +137,6 @@ public class Party implements Serializable {
 	private List<PartyTeilnahme> teilnehmer;
 	
 
-	@OneToMany(mappedBy="party", cascade = CascadeType.ALL)
-	private List<PartyItem> partyitems;
-	
 		
 
 //	@ManyToMany(mappedBy = "parties")

@@ -338,7 +338,7 @@ public class PartyService {
 		List<Party> ichNehmeTeil = findZugesagtePartiesByNutzer(nutzer);
 		List<Party> abgesagtNochOffen = findAbgesagtePartiesByNutzer(nutzer);
 		List<Party> ichHabeTeilgenommen = findPartiesIAttendedByNutzer(nutzer);
-		List<Party> toRate = null;
+		List<Party> toRate = findPartiesIAttendedNotRatedByNutzer(nutzer);
 		List<Party> meinePartysVergangenheit = findClosedPartiesByNutzer(nutzer);
 		
 		holder.setMeinepartys(meinePartys);
