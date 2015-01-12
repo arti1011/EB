@@ -141,9 +141,7 @@ public class Party implements Serializable {
 	@OneToMany(mappedBy="party", cascade = CascadeType.ALL)
 	private List<PartyItem> partyitems;
 	
-	@OneToMany(mappedBy="party")
-	private List<Ranking> rankings;
-	
+		
 //	@ManyToMany(mappedBy = "parties")
 //	private List<Nutzer> teilnehmer;
 	
@@ -275,15 +273,7 @@ public class Party implements Serializable {
 	}
 
 	
-	@XmlTransient
-	public List<Ranking> getRankings() {
-		return rankings;
-	}
-
-	public void setRankings(List<Ranking> rankings) {
-		this.rankings = rankings;
-	}
-
+	
 	public void zusagen(Party party){
 		
 		

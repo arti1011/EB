@@ -219,6 +219,7 @@ public class Nutzer implements Serializable {
 	}
 	@PrePersist
 	protected void prePerstist() {
+		erzeugt = new Date();
 		aktualisiert = new Date();
 	}
 	

@@ -1,6 +1,5 @@
 package de.party.nutzer.rest;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -24,6 +23,7 @@ import javax.ws.rs.core.UriInfo;
 
 
 
+
 import org.jboss.logging.Logger;
 
 import com.google.common.base.Strings;
@@ -35,7 +35,7 @@ import de.party.nutzer.domain.Nutzer;
 import de.party.nutzer.domain.ProfilePicture;
 import de.party.nutzer.service.NutzerService;
 import de.party.party.domain.Party;
-import de.party.party.domain.Ranking;
+import de.party.party.domain.Rating;
 import de.party.party.service.PartyService;
 import de.party.util.rest.NotFoundException;
 
@@ -558,10 +558,9 @@ public class NutzerResource {
 	 * Es werden nur die Parties ausgelesen, die schon stattgefunden habe (Datum=in der Vergangenheit)
 	 * und die noch nicht bewertet wurden
 	 * 
-	 * Hilfsmethode um anschließend ein Rating auf eine Party abzusetzen
-	 * 
+	 *  
 	 * @param nutzerId
-	 * @return
+	 * @return List<Party>
 	 */
 	@GET
 	@Path("{id:[1-9][0-9]*}/PartiesIAttended")
@@ -576,16 +575,40 @@ public class NutzerResource {
 		return Response.ok(parties).build();
 		
 	}
-
 	/**
-	 * Rankings zu den Parties auslesen die der User veranstaltet hat
-	 * Methode für View: Ranking
+	 * Alle Parties anzeigen an denen der User teilgenommen hat
 	 * 
-	 * @param veranstalterId
-	 * @return
+	 * Es werden nur die Parties ausgelesen, die schon stattgefunden habe (Datum=in der Vergangenheit)
+	 * und die noch nicht bewertet wurden
+	 * 
+	 * Hilfsmethode um anschließend ein Rating auf eine Party abzusetzen
+	 * 
+	 * @param nutzerId
+	 * @return List<Party>
 	 */
 	@GET
-	@Path("{id:[1-9][0-9]*}/meineParties/ranking")
+	@Path("{id:[1-9][0-9]*}/PartiesIAttendedNotRated")
+	public Response findAttendedPartiesToRateByNutzerId(@PathParam("id") Long nutzerId) {
+		final Nutzer nutzer = ns.findNutzerById(nutzerId);
+		
+				
+		final List<Party> parties = ps.findPartiesIAttendedNotRatedByNutzer(nutzer);
+		
+		
+		
+		return Response.ok(parties).build();
+		
+	}
+
+	/**
+	 * Alle Ratings auslesen, die der übermittelte User veranstaltet hat.
+	 * Methode für Profil, kumuliertes Rating über alle Parties
+	 * 
+	 * @param veranstalterId
+	 * @return List<Rating>
+	 */
+	@GET
+	@Path("{id:[1-9][0-9]*}/myParties/ratings")
 	public Response getRankingsToMyParties(@PathParam("id") Long veranstalterId) {
 		final Nutzer veranstalter = ns.findNutzerById(veranstalterId);
 		
@@ -595,19 +618,14 @@ public class NutzerResource {
 		
 		final List<Party> parties = ps.findClosedPartiesByNutzer(veranstalter);
 		
-		final List<Ranking> rankings = new ArrayList<>();
-		
-		//Liste der einzelnen Ratings auslesen
-		for (Party party : parties) {
-			final Ranking ranking = ps.findRankingsByParty(party);
-			
-			//Rating zur Party holen und wieder im Ranking-Objekt speichern
-			ranking.setRating(ps.getRatingToParty(party));
-			
-			//Ranking-Objekt in der Ergebnisliste speichern
+		if (parties == null || parties.isEmpty()) {
+			return null;
 		}
-		//TODO Methode weiterbauen..
-		return null;
+		
+		final List<Rating> ratings = ns.findRatingsToVeranstalter(veranstalter, parties);
+		
+		
+		return Response.ok(ratings).build();
 		
 		
 		

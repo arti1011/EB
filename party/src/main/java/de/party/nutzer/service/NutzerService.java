@@ -17,6 +17,7 @@ import de.party.nutzer.domain.Freundschaft;
 import de.party.nutzer.domain.Nutzer;
 import de.party.nutzer.domain.ProfilePicture;
 import de.party.party.domain.Party;
+import de.party.party.domain.Rating;
 import de.party.party.domain.StatusType;
 import static de.party.util.Constants.DEFAULT_PICTURE;
 
@@ -328,6 +329,27 @@ public class NutzerService {
 		
 		
 		
+	}
+
+
+	public List<Rating> findRatingsToVeranstalter(Nutzer veranstalter, List<Party> parties) {
+		
+		final List<Rating> ratings = new ArrayList<>();
+		//Über alle Parties itererieren und Rating-Objekte aus DB laden
+		for (Party myParty : parties) {
+			final List<Rating> ratingsToParty = em.createNamedQuery(Rating.FIND_RATINGS_TO_PARTY, Rating.class)
+															.setParameter(Rating.PARTY_PARAM, myParty)
+															.getResultList();
+			if(!(ratingsToParty == null || ratingsToParty.isEmpty())) {
+				ratings.addAll(ratingsToParty);
+			}
+			
+		}
+		
+		if (ratings == null || ratings.isEmpty()) {
+			return Collections.emptyList();
+		}
+		return ratings;
 	}
 
 	
