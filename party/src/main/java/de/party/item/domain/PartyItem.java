@@ -36,6 +36,9 @@ public class PartyItem implements Serializable {
 	@Column(nullable = false)
 	private String beschreibung;
 	
+	@Column(nullable = false)
+	private boolean selected;
+	
 	
 	public PartyItem() {
 		super();
@@ -92,6 +95,18 @@ public class PartyItem implements Serializable {
 
 	public void setMitbringer_fk(Long mitbringer_fk) {
 		this.mitbringer_fk = mitbringer_fk;
+	}
+	
+	
+
+
+	public boolean isSelected() {
+		return selected;
+	}
+
+
+	public void setSelected(boolean selected) {
+		this.selected = selected;
 	}
 
 
