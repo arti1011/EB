@@ -229,6 +229,7 @@ public class Nutzer implements Serializable, Comparable<Nutzer> {
 	}
 	@PrePersist
 	protected void prePerstist() {
+		erzeugt = new Date();
 		aktualisiert = new Date();
 	}
 	

@@ -1,5 +1,6 @@
 package de.party.party.service;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.ArrayList;
@@ -18,7 +19,7 @@ import de.party.party.domain.ListenHolder;
 import de.party.item.domain.PartyItem;
 import de.party.party.domain.FreundeHolder;
 import de.party.party.domain.PartyTeilnahme;
-import de.party.party.domain.Ranking;
+import de.party.party.domain.Rating;
 import de.party.party.domain.StatusType;
 
 public class PartyService {
@@ -265,12 +266,14 @@ public class PartyService {
 																	   .setParameter(Party.PARAM_TEILNEHMER, nutzer)
 																	   .setParameter(Party.PARAM_STATUS, StatusType.ZUSAGE)
 																	   .getResultList();
-		
+		if (partiesIAttended == null || partiesIAttended.isEmpty()) {
+			return Collections.emptyList();
+		}
 		
 		return partiesIAttended;
 	}
 
-	public Ranking bewerteParty(Ranking ranking) {
+	public Rating bewerteParty(Rating ranking) {
 		
 		if (ranking == null) {
 			return ranking;
@@ -282,25 +285,48 @@ public class PartyService {
 		
 	}
 
-	public Double getRatingToParty(Party party) {
+	public List<Rating> getRatingToParty(Party party) {
 		
 		//Ranking-Objekt zu dieser Party auslesen
-		final List<Ranking> rankings = em.createNamedQuery(Ranking.FIND_RANKINGS_TO_PARTY, Ranking.class)
-																  .setParameter(Ranking.PARTY_PARAM, party)
+		final List<Rating> ratings = em.createNamedQuery(Rating.FIND_RATINGS_TO_PARTY, Rating.class)
+																  .setParameter(Rating.PARTY_PARAM, party)
 																  .getResultList();
 		//Wenn noch kein Ranking vorhanden, gib null zurück
-		if(rankings == null || rankings.isEmpty()) {
-			return new Double(0);
+		if(ratings == null || ratings.isEmpty()) {
+			return Collections.emptyList();
 		}
-		double sum = 0;
-		int anzahl = rankings.size();
-		
-		for (Ranking ranking : rankings) {
-			sum += ranking.getRating();
-		}
-		
+			
 		//Ergebnis abrunden um nur ganzzahlige Ratings darzustellen
-		return sum/anzahl;
+		return ratings;
+	}
+
+	public Rating findRankingsByParty(Party party) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public List<Party> findPartiesIAttendedNotRatedByNutzer(Nutzer nutzer) {
+		//Parties an denen der User teilgenommen hat
+		final List<Party> parties = findPartiesIAttendedByNutzer(nutzer);
+		
+		if (parties == null || parties.isEmpty()) {
+			return Collections.emptyList();
+			
+		}
+		final List<Party> result = new ArrayList<>();
+		//Anhand der gefundene Parties prüfen ob schon ein Rating abgegeben wurde
+		for (Party party : parties) {
+			final List<Rating> ratings = em.createNamedQuery(Rating.FIND_RATING_TO_PARTY_BY_TEILNEHMER, Rating.class)
+									.setParameter(Rating.PARTY_PARAM, party)
+									.setParameter(Rating.NUTZER_PARAM, nutzer)
+									.getResultList();
+			//Wenn kein Rating-Objekt gefunden wurde, Party in Ergebnisliste speichern
+			if ((ratings == null || ratings.isEmpty())) {
+				result.add(party);
+			}
+		}
+		
+		return result;
 	}
 	
 	public ListenHolder findPartyListenById(Nutzer nutzer) {

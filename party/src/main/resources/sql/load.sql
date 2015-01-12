@@ -25,6 +25,7 @@ INSERT INTO NUTZER (ID, EMAIL, PICTURE_ID, AKTUALISIERT, ERZEUGT, NACHNAME, PASS
 
 -- Attribute
 -- id aktualisiert erzeugt hausnr ort plz strasse nutzer_fk
+-- WICHTIG: Adresse muss in Deutschland gültig sein, eindeutig für GoogleMaps-API
 INSERT INTO ADRESSE (ID, AKTUALISIERT, ERZEUGT, HAUSNR, ORT, PLZ, STRASSE, NUTZER_FK) VALUES ('1','01.08.2007 00:00:00','01.08.2007 00:00:00','4','Busenbach','76337','Carl-Benz-Str.','1');
 INSERT INTO ADRESSE (ID, AKTUALISIERT, ERZEUGT, HAUSNR, ORT, PLZ, STRASSE, NUTZER_FK) VALUES ('2','01.08.2007 00:00:00','01.08.2007 00:00:00','36','Karlsruhe','76133','Durlacher Allee', '2');
 INSERT INTO ADRESSE (ID, AKTUALISIERT, ERZEUGT, HAUSNR, ORT, PLZ, STRASSE, NUTZER_FK) VALUES ('3','01.08.2007 00:00:00','01.08.2007 00:00:00','4','Pfalzdorf','12345','Pfaelzer-Weinschorle-Strasse','3');

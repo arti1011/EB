@@ -26,7 +26,8 @@ import de.party.party.domain.FreundeHolder;
 import de.party.party.domain.Party;
 import de.party.party.domain.ListenHolder;
 import de.party.item.domain.PartyItem;
-import de.party.party.domain.Ranking;
+import de.party.party.domain.Rating;
+
 import de.party.party.service.PartyService;
 import de.party.util.rest.NotFoundException;
 import static de.party.util.Constants.KEINE_ID;
@@ -327,23 +328,28 @@ public class PartyResource {
 		
 	}
 	/**
-	 * Eine Party bewerten
+	 * Eine Party bewerten. 
+	 * 
+	 * Vor dieser Methode die Party-Objekte auslesen, an denen
+	 * der Nutzer teilgenommen hat und noch nicht geratet hat
+	 * -> HilfsMethode /rest/user/id:[..]/PartiesIAttendedNotRated
 	 * 
 	 * 
 	 * @param ranking
-	 * @return
+	 * @return Response.created
 	 */
 	@POST
 	@Path("/bewerten")
 	@Consumes(APPLICATION_JSON)
 	@Transactional
-	public Response rateParty(Ranking ranking) {
+	public Response rateParty(Rating rating) {
 		//ID zurücksetzen
-		ranking.setId(KEINE_ID);
+		rating.setId(KEINE_ID);
 		
-		ranking = ps.bewerteParty(ranking);
+		rating = ps.bewerteParty(rating);
 		return Response.created(null).build();
 	}
+
 	
 	@PUT
 	@Path("{id:[1-9][0-9]*}/addeinkaufliste")
@@ -410,6 +416,14 @@ public class PartyResource {
 	
 
 
+
+	/**
+	 * Alle Rating Objekte zu einer Party-ID auslesen
+	 * 
+	 * @param id
+	 * @return List<Rating>
+	 */
+
 	@GET
 	@Path("{id:[1-9][0-9]*}/rating")
 	public Response getRatingToPartyId(@PathParam("id") Long id) {
@@ -417,9 +431,9 @@ public class PartyResource {
 		//Party-Objekt ermitteln
 		final Party party = ps.findPartyById(id);
 		
-		final Double rating = ps.getRatingToParty(party);
+		final List<Rating> ratings = ps.getRatingToParty(party);
 		
-		return Response.ok(rating).build();
+		return Response.ok(ratings).build();
 	}
 	
 	
