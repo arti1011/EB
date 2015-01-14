@@ -72,7 +72,7 @@ public class Rating implements Serializable{
 	private Party party;
 	
 	@Column
-	private Double value;
+	private float value;
 
 	@Column
 	private String kommentar;
@@ -82,7 +82,7 @@ public class Rating implements Serializable{
 	@XmlTransient
 	private Date erzeugt;
 	
-	public Rating(Party party, Nutzer nutzer, Double rating, String kommentar) {
+	public Rating(Party party, Nutzer nutzer, float rating, String kommentar) {
 		this.party = party;
 		this.teilnehmer = nutzer;
 		this.value = rating;
@@ -119,11 +119,11 @@ public class Rating implements Serializable{
 		this.party = party;
 	}
 
-	public Double getValue() {
+	public float getValue() {
 		return value;
 	}
 
-	public void setValue(Double value) {
+	public void setValue(float value) {
 		this.value = value;
 	}
 
