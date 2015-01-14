@@ -142,6 +142,10 @@ public class NutzerService {
 		final Nutzer nutzer = findNutzerById(id);
 		
 		if (!(nutzer == null)) {
+			//Nutzer der anfrägt aus der Liste entfernen
+			if (nutzerByNachname.contains(nutzer)) {
+				nutzerByNachname.remove(nutzer);
+			}
 			final List<Nutzer> freunde = findFriendsByNutzer(nutzer);
 			
 			//Wenn Benutzer schon Freunde hat, Nutzer-Objekte aus Freundesliste aus nutzerByNachname Liste löschen
