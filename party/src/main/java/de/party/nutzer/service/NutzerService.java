@@ -126,16 +126,34 @@ public class NutzerService {
 	}
 
 
-	public List<Nutzer> findNutzerByNachnamePrefix(String nachnamePrefix) {
+	public List<Nutzer> findNutzerByNachnamePrefix(Long id, String nachnamePrefix) {
 		
 		if (Strings.isNullOrEmpty(nachnamePrefix))
 			return Collections.emptyList();
 
-
-		return em.createNamedQuery(Nutzer.FIND_NUTZER_BY_NACHNAME_PREFIX, Nutzer.class)
+		final List<Nutzer> nutzerByNachname =  em.createNamedQuery(Nutzer.FIND_NUTZER_BY_NACHNAME_PREFIX, Nutzer.class)
 				 .setParameter(Nutzer.NACHNAME_QUERY_PARAM, nachnamePrefix.toUpperCase() + '%')
 				 .setMaxResults(MAX_AUTOCOMPLETE)
 				 .getResultList();
+		if (nutzerByNachname == null || nutzerByNachname.isEmpty()) {
+			return Collections.emptyList();
+		}
+		//Nur die Nutzer ausgeben, die noch nicht in der Freundesrelation auftauchen
+		final Nutzer nutzer = findNutzerById(id);
+		
+		if (!(nutzer == null)) {
+			final List<Nutzer> freunde = findFriendsByNutzer(nutzer);
+			
+			//Wenn Benutzer schon Freunde hat, Nutzer-Objekte aus Freundesliste aus nutzerByNachname Liste löschen
+			if(!(freunde == null || freunde.isEmpty())) {
+				for (Nutzer freund : freunde) {
+					if (nutzerByNachname.contains(freund)) {
+						nutzerByNachname.remove(freund);
+					}
+				}
+			}
+		}
+		return nutzerByNachname;
 		
 	}
 	
