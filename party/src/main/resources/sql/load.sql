@@ -208,7 +208,6 @@ INSERT INTO FREUNDSCHAFT (OWNER_ID, FRIEND_ID) VALUES ('1', '18')
 INSERT INTO FREUNDSCHAFT (OWNER_ID, FRIEND_ID) VALUES ('1', '19')
 INSERT INTO FREUNDSCHAFT (OWNER_ID, FRIEND_ID) VALUES ('1', '20')
 
-
 --Michi
 INSERT INTO FREUNDSCHAFT (OWNER_ID, FRIEND_ID) VALUES ('2', '3')
 INSERT INTO FREUNDSCHAFT (OWNER_ID, FRIEND_ID) VALUES ('2', '4')
@@ -320,10 +319,6 @@ INSERT INTO PARTY(ID, BESCHREIBUNG, DATUM, TITEL, UHRZEIT, VERANSTALTER, LATITUD
 INSERT INTO PARTY(ID, BESCHREIBUNG, DATUM, TITEL, UHRZEIT, VERANSTALTER, LATITUDE, LONGITUDE) VALUES('223','Um das erste Release der HsKampus-App zu feiern, seid ihr alle eingeladen.','12.03.2013 08:00:00','Release Party','22:00','5','49.015666','8.389605999999999');
 INSERT INTO PARTY(ID, BESCHREIBUNG, DATUM, TITEL, UHRZEIT, VERANSTALTER, LATITUDE, LONGITUDE) VALUES('224','Zu Weihnachten moechte ich mit euch nochmal feiern und auf das erfolgreiche Jahr zurueckblicken','23.12.2014 08:00:00','Weihnachtsfeier','22:00','5','49.015666','8.389605999999999');
 
-
-
-
-
 -- Till Party Offen
 --zukünftig
 INSERT INTO PARTYTEILNAHME(ID, STATUS, PARTY_ID, TEILNEHMER_ID) VALUES ('1','OFFEN','200','6');
@@ -369,8 +364,6 @@ INSERT INTO PARTYTEILNAHME(ID, STATUS, PARTY_ID, TEILNEHMER_ID) VALUES ('23','AB
 
 INSERT INTO PARTYTEILNAHME(ID, STATUS, PARTY_ID, TEILNEHMER_ID) VALUES ('24','ABSAGE','204','77');
 INSERT INTO PARTYTEILNAHME(ID, STATUS, PARTY_ID, TEILNEHMER_ID) VALUES ('25','ABSAGE','204','78');
-
-
 
 -- Till Party Zusagen
 --zukünftig
@@ -781,3 +774,90 @@ INSERT INTO PARTYTEILNAHME(ID, STATUS, PARTY_ID, TEILNEHMER_ID) VALUES ('317','Z
 INSERT INTO PARTYTEILNAHME(ID, STATUS, PARTY_ID, TEILNEHMER_ID) VALUES ('318','ZUSAGE','224','10');
 INSERT INTO PARTYTEILNAHME(ID, STATUS, PARTY_ID, TEILNEHMER_ID) VALUES ('319','ZUSAGE','224','11');
 INSERT INTO PARTYTEILNAHME(ID, STATUS, PARTY_ID, TEILNEHMER_ID) VALUES ('320','ZUSAGE','224','12');
+
+
+
+--RATINGS
+-- Immer die ersten zwei Party's sind teils geratet
+
+--Till 1.
+INSERT INTO RATING(ID, ERZEUGT, KOMMENTAR, VALUE, NUTZER_FK, PARTY_FK) VALUES('1', '18.04.2014 18:00:00','Bin gerade aufgewacht, war echt ne hammer party Leute!','5,0','2','202')
+INSERT INTO RATING(ID, ERZEUGT, KOMMENTAR, VALUE, NUTZER_FK, PARTY_FK) VALUES('2', '18.04.2014 18:06:00','Hat jemand meinen Geldbeutel und mein Handy gesehn? :/ aber sonst klasse Ding!','4,5','3','202')
+INSERT INTO RATING(ID, ERZEUGT, KOMMENTAR, VALUE, NUTZER_FK, PARTY_FK) VALUES('3', '18.04.2014 18:15:00','super Musik, super Leute, super Stimmung :) hat mir sehr gut gefallen :)','4,5','4','202')
+INSERT INTO RATING(ID, ERZEUGT, KOMMENTAR, VALUE, NUTZER_FK, PARTY_FK) VALUES('4', '18.04.2014 19:53:00','Gab viel zu wenig zu trinken! beim naechsten mal bitte besser planen, dann gibts auch mehr Sterne.','2,5','10','202')
+INSERT INTO RATING(ID, ERZEUGT, KOMMENTAR, VALUE, NUTZER_FK, PARTY_FK) VALUES('5', '18.04.2014 20:14:00','Geile Party!','5,0','11','202')
+INSERT INTO RATING(ID, ERZEUGT, KOMMENTAR, VALUE, NUTZER_FK, PARTY_FK) VALUES('6', '18.04.2014 21:53:00','Wer hat denn bitte diesen DJ engagiert? der hatte ja gar nichts drauf...','1,0','12','202')
+INSERT INTO RATING(ID, ERZEUGT, KOMMENTAR, VALUE, NUTZER_FK, PARTY_FK) VALUES('7', '18.04.2014 21:53:00','Gute Party','3,5','5','202')
+
+--Till 2.
+INSERT INTO RATING(ID, ERZEUGT, KOMMENTAR, VALUE, NUTZER_FK, PARTY_FK) VALUES('8', '21.08.2014 18:05:00','Meine Erwartungen waren zwar sehr gering und ich war auf alle Eventualitaeten vorbereitet, aber trotzdem habt ihr es geschafft mich zu Enttaeuschen. Daumen runter! :(','1,0','2','203')
+INSERT INTO RATING(ID, ERZEUGT, KOMMENTAR, VALUE, NUTZER_FK, PARTY_FK) VALUES('9', '21.08.2014 19:34:00','Alter bin ich noch dicht. Wie geil war denn das gestern? Wir sind einfach die Besten! :)','4,5','3','203')
+INSERT INTO RATING(ID, ERZEUGT, KOMMENTAR, VALUE, NUTZER_FK, PARTY_FK) VALUES('10', '21.08.2014 19:38:00','Geile Party!!!','4,5','4','203')
+INSERT INTO RATING(ID, ERZEUGT, KOMMENTAR, VALUE, NUTZER_FK, PARTY_FK) VALUES('11', '21.08.2014 21:18:00','Da ist noch Potential nach oben, Idee gut - Ausfuehrung miserabel.','2,0','5','203')
+
+
+--Michi 1.
+INSERT INTO RATING(ID, ERZEUGT, KOMMENTAR, VALUE, NUTZER_FK, PARTY_FK) VALUES('12', '04.03.2013 08:02:00','Wo bin ich?! :D :)','5,0','1','207')
+INSERT INTO RATING(ID, ERZEUGT, KOMMENTAR, VALUE, NUTZER_FK, PARTY_FK) VALUES('13', '04.03.2013 09:15:00','Hat jemand meinen Geldbeutel und mein Handy gesehn? :/ aber sonst klasse Ding!','4,5','3','207')
+INSERT INTO RATING(ID, ERZEUGT, KOMMENTAR, VALUE, NUTZER_FK, PARTY_FK) VALUES('14', '04.03.2013 11:34:00','super Musik, super Leute, super Stimmung :) hat mir sehr gut gefallen :)','5,0','4','207')
+INSERT INTO RATING(ID, ERZEUGT, KOMMENTAR, VALUE, NUTZER_FK, PARTY_FK) VALUES('15', '04.03.2013 12:18:00','Also die Jungs, die wissen wie man feiert. Nur haben die Frauen gefehlt, aber die können ja nichts dafür, dass sie Informatiker sind. Prinzipiell gut mit Potential nach oben.','4,0','10','207')
+INSERT INTO RATING(ID, ERZEUGT, KOMMENTAR, VALUE, NUTZER_FK, PARTY_FK) VALUES('16', '04.03.2013 18:25:00','Achtung, geht bloß nicht zu den Partys dieser WG – die laden ihre Eltern ein und dann darf man nur Bier trinken!','2,0','11','207')
+INSERT INTO RATING(ID, ERZEUGT, KOMMENTAR, VALUE, NUTZER_FK, PARTY_FK) VALUES('17', '05.03.2013 15:14:00','Ihr habt mal wieder bewiesen, dass man auch ohne Spass Alkohol haben kann :/ muss sagen ich war schon auf besseren Events...','1,0','12','207')
+INSERT INTO RATING(ID, ERZEUGT, KOMMENTAR, VALUE, NUTZER_FK, PARTY_FK) VALUES('18', '06.03.2013 18:23:00','Super Fete!','4,0','5','207')
+
+--Michi 2.
+INSERT INTO RATING(ID, ERZEUGT, KOMMENTAR, VALUE, NUTZER_FK, PARTY_FK) VALUES('19', '13.12.2014 14:30:00','War das Absicht, dass es nur Robby Bubble Kindersekt gab oder hatte ich die falsche Adresse und war auf einem Kindergeburtstag? Aber die Snacks waren gut.','3,0','1','208')
+INSERT INTO RATING(ID, ERZEUGT, KOMMENTAR, VALUE, NUTZER_FK, PARTY_FK) VALUES('20', '13.12.2014 17:28:00','Zum Abdichten hats gereicht, mehr aber auch nicht…','3,5','3','208')
+INSERT INTO RATING(ID, ERZEUGT, KOMMENTAR, VALUE, NUTZER_FK, PARTY_FK) VALUES('21', '13.12.2014 18:58:00','Eure WG, die weiß einfach wie man feiert. Mir gehts zwar jedes Mal schlecht am nächsten Tag und ich fühle mich, als ob ich unter einen Truck gekommen wäre… aber ist ja nicht eure Schuld, wenn ich mich nicht unter Kontrolle habe.','5,0','4','208')
+INSERT INTO RATING(ID, ERZEUGT, KOMMENTAR, VALUE, NUTZER_FK, PARTY_FK) VALUES('22', '13.12.2014 19:05:00','Nette Feierei!','4,5','5','208')
+
+--Günni 1.
+INSERT INTO RATING(ID, ERZEUGT, KOMMENTAR, VALUE, NUTZER_FK, PARTY_FK) VALUES('23', '25.12.2014 08:00:00','Schalalalalala lalalalalalala laaaaaaaaaaaaa.','5,0','2','212')
+INSERT INTO RATING(ID, ERZEUGT, KOMMENTAR, VALUE, NUTZER_FK, PARTY_FK) VALUES('24', '25.12.2014 08:00:00','An dieser Stelle auch nochmal ein großes Dankeschön an die Veranstalter der gestrigen WG-Party! War ein richtig geiler Abend und ich freue mich schon auf eine neue Party mit euch verrückten… Und jetzt viel Spaß beim Putzen.','4,5','1','212')
+INSERT INTO RATING(ID, ERZEUGT, KOMMENTAR, VALUE, NUTZER_FK, PARTY_FK) VALUES('25', '25.12.2014 08:00:00','Immer noch dicht wie Harry!','4,5','4','212')
+INSERT INTO RATING(ID, ERZEUGT, KOMMENTAR, VALUE, NUTZER_FK, PARTY_FK) VALUES('26', '25.12.2014 08:00:00','Nicht schlecht aber mies organisiert. Aber da es eure erste Party war werdet ihr sicher daraus lernen...','2,5','10','212')
+INSERT INTO RATING(ID, ERZEUGT, KOMMENTAR, VALUE, NUTZER_FK, PARTY_FK) VALUES('27', '25.12.2014 08:00:00','Fette, fette Party.','5,0','11','212')
+INSERT INTO RATING(ID, ERZEUGT, KOMMENTAR, VALUE, NUTZER_FK, PARTY_FK) VALUES('28', '25.12.2014 08:00:00','Fand es jetzt leider nicht so geil gestern. Weiß gar nicht was ihr alle habt? Kommt mal wieder runter ihr Pseudo-Alkoholiker. Ging gar nicht! ','1,0','12','212')
+INSERT INTO RATING(ID, ERZEUGT, KOMMENTAR, VALUE, NUTZER_FK, PARTY_FK) VALUES('29', '25.12.2014 08:00:00','Zwar ein wenig ruhig, aber super Leute!','3,5','5','212')
+
+--Günni 2.
+INSERT INTO RATING(ID, ERZEUGT, KOMMENTAR, VALUE, NUTZER_FK, PARTY_FK) VALUES('30', '10.04.2014 08:00:00','Mega geile Party Immer wieder gerne!!! :)','5,0','1','213')
+INSERT INTO RATING(ID, ERZEUGT, KOMMENTAR, VALUE, NUTZER_FK, PARTY_FK) VALUES('31', '10.04.2014 08:00:00','Krasses Ding. Schreibt wenn ihr hilfe beim Putzen braucht :D','4,5','2','213')
+INSERT INTO RATING(ID, ERZEUGT, KOMMENTAR, VALUE, NUTZER_FK, PARTY_FK) VALUES('32', '10.04.2014 08:00:00','Eskalation. Totale Eskalation! Trichtern hat voll geknallt! #MalleSchlauchKombo','5,0','4','213')
+INSERT INTO RATING(ID, ERZEUGT, KOMMENTAR, VALUE, NUTZER_FK, PARTY_FK) VALUES('33', '10.04.2014 08:00:00','Krasse Party!','5,0','5','213')
+
+--Richter 1.
+INSERT INTO RATING(ID, ERZEUGT, KOMMENTAR, VALUE, NUTZER_FK, PARTY_FK) VALUES('34', '01.04.2014 08:00:00','Bin gerade aufgewacht, war echt ne hammer party Leute!','5,0','2','217')
+INSERT INTO RATING(ID, ERZEUGT, KOMMENTAR, VALUE, NUTZER_FK, PARTY_FK) VALUES('35', '01.04.2014 08:00:00','Hat jemand meinen Geldbeutel und mein Handy gesehn? :/ aber sonst klasse Ding!','4,5','3','217')
+INSERT INTO RATING(ID, ERZEUGT, KOMMENTAR, VALUE, NUTZER_FK, PARTY_FK) VALUES('36', '01.04.2014 08:00:00','super Musik, super Leute, super Stimmung :) hat mir sehr gut gefallen :)','4,5','1','217')
+INSERT INTO RATING(ID, ERZEUGT, KOMMENTAR, VALUE, NUTZER_FK, PARTY_FK) VALUES('37', '01.04.2014 08:00:00','Gab viel zu wenig zu trinken! beim naechsten mal bitte besser planen, dann gibts auch mehr Sterne.','2,5','10','217')
+INSERT INTO RATING(ID, ERZEUGT, KOMMENTAR, VALUE, NUTZER_FK, PARTY_FK) VALUES('38', '01.04.2014 08:00:00','Dass ich das noch miterleben durfte!','5,0','11','217')
+INSERT INTO RATING(ID, ERZEUGT, KOMMENTAR, VALUE, NUTZER_FK, PARTY_FK) VALUES('39', '01.04.2014 08:00:00','Wer hat denn bitte diesen DJ engagiert? der hatte ja gar nichts drauf...','1,0','12','217')
+INSERT INTO RATING(ID, ERZEUGT, KOMMENTAR, VALUE, NUTZER_FK, PARTY_FK) VALUES('40', '01.04.2014 08:00:00','Gute Party!!!','3,5','5','217')
+
+--Richter 2.
+INSERT INTO RATING(ID, ERZEUGT, KOMMENTAR, VALUE, NUTZER_FK, PARTY_FK) VALUES('41', '11.05.2014 08:00:00','Krasses Ding! :D :D ','4,5','1','218')
+INSERT INTO RATING(ID, ERZEUGT, KOMMENTAR, VALUE, NUTZER_FK, PARTY_FK) VALUES('42', '11.05.2014 08:00:00','Haha, habt ihr gesehen, wie sich Sarah eingekotzt hat? Nur geil!','4,0','2','218')
+INSERT INTO RATING(ID, ERZEUGT, KOMMENTAR, VALUE, NUTZER_FK, PARTY_FK) VALUES('43', '11.05.2014 08:00:00','Zum Abdichten hats gereicht, mehr aber auch nicht…','3,5','3','218')
+INSERT INTO RATING(ID, ERZEUGT, KOMMENTAR, VALUE, NUTZER_FK, PARTY_FK) VALUES('44', '11.05.2014 08:00:00','Super Stimmung bei euch! Immer wieder gerne.','5,0','5','218')
+
+--Seifert 1.
+INSERT INTO RATING(ID, ERZEUGT, KOMMENTAR, VALUE, NUTZER_FK, PARTY_FK) VALUES('45', '22.08.2014 08:54:00','Bin gerade aufgewacht, war echt ne hammer party Leute!','5,0','1','222')
+INSERT INTO RATING(ID, ERZEUGT, KOMMENTAR, VALUE, NUTZER_FK, PARTY_FK) VALUES('46', '22.08.2014 09:23:00','Hat jemand meinen Geldbeutel und mein Handy gesehn? :/ aber sonst klasse Ding!','4,5','2','222')
+INSERT INTO RATING(ID, ERZEUGT, KOMMENTAR, VALUE, NUTZER_FK, PARTY_FK) VALUES('47', '22.08.2014 10:12:00','super Musik, super Leute, super Stimmung :) hat mir sehr gut gefallen :)','4,5','3','222')
+INSERT INTO RATING(ID, ERZEUGT, KOMMENTAR, VALUE, NUTZER_FK, PARTY_FK) VALUES('48', '23.08.2014 14:35:00','Gab viel zu wenig zu trinken! beim naechsten mal bitte besser planen, dann gibts auch mehr Sterne.','2,5','23','222')
+INSERT INTO RATING(ID, ERZEUGT, KOMMENTAR, VALUE, NUTZER_FK, PARTY_FK) VALUES('49', '23.08.2014 18:22:00','Geile Party!','5,0','11','222')
+INSERT INTO RATING(ID, ERZEUGT, KOMMENTAR, VALUE, NUTZER_FK, PARTY_FK) VALUES('50', '23.08.2014 19:40:00','Wer hat denn bitte diesen DJ engagiert? der hatte ja gar nichts drauf...','1,0','12','222')
+INSERT INTO RATING(ID, ERZEUGT, KOMMENTAR, VALUE, NUTZER_FK, PARTY_FK) VALUES('51', '23.08.2014 23:51:00','Gute Party','3,5','78','222')
+
+--Seifert 2.
+INSERT INTO RATING(ID, ERZEUGT, KOMMENTAR, VALUE, NUTZER_FK, PARTY_FK) VALUES('52', '13.03.2013 07:54:00','Saubere Feier!','4,5','1','223')
+INSERT INTO RATING(ID, ERZEUGT, KOMMENTAR, VALUE, NUTZER_FK, PARTY_FK) VALUES('53', '13.03.2013 08:03:00','Die Feier ham wir uns auch verdient gehabt :)','4,0','2','223')
+INSERT INTO RATING(ID, ERZEUGT, KOMMENTAR, VALUE, NUTZER_FK, PARTY_FK) VALUES('54', '14.03.2013 15:23:00','Gechilltes beisammensein. :)','3,5','3','223')
+INSERT INTO RATING(ID, ERZEUGT, KOMMENTAR, VALUE, NUTZER_FK, PARTY_FK) VALUES('55', '15.03.2013 14:10:00','Geile Party!','5,0','4','223')
+
+
+
+
+
+
