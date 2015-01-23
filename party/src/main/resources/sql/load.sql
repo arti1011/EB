@@ -280,7 +280,7 @@ INSERT INTO PARTY(ID, BESCHREIBUNG, DATUM, TITEL, UHRZEIT, VERANSTALTER, LATITUD
 
 -- Veranstalter-ID=2
 -- +++ zukünftig +++ ---
-INSERT INTO PARTY(ID, BESCHREIBUNG, DATUM, TITEL, UHRZEIT, VERANSTALTER, LATITUDE, LONGITUDE) VALUES('205','Fuer ein unvergessliches Feiererlebnis, moechte ich in meiner WG unter dem Motto: "Man(n) traegt Bart - Frau Abendkleid, lade ich zu meiner Party.','21.05.2015 08:00:00','Man(n) traegt Bart - Frau hat die Haare schoen','20:00','2','49.0078845','8.42174');
+INSERT INTO PARTY(ID, BESCHREIBUNG, DATUM, TITEL, UHRZEIT, VERANSTALTER, LATITUDE, LONGITUDE) VALUES('205','Fuer ein unvergessliches Feiererlebnis, moechte ich in meiner WG unter dem Motto: "Man(n) traegt Bart - Frau Abendkleid, lade ich zu meiner Party.','21.05.2015 08:00:00','Man(n) traegt Bart','20:00','2','49.0078845','8.42174');
 INSERT INTO PARTY(ID, BESCHREIBUNG, DATUM, TITEL, UHRZEIT, VERANSTALTER, LATITUDE, LONGITUDE) VALUES('206','Zu meinem Geburtstag veranstalte ich eine WG-Party bei mir in Karlsruhe. Start ist 22:00.','21.05.2015 08:00:00','Geburtstagsparty','22:00','2','49.0078845','8.42174');
 
 
