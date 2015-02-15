@@ -143,7 +143,7 @@ public class NutzerResource {
 	 * @throws NotFoundException
 	 */
 	@GET
-	@Path("{id:[0-9][1-9]*}/prefix/nachname/{nachname}")
+	@Path("{id:[1-9][0-9]*}/prefix/nachname/{nachname}")
 	public Response findNutzerByNachnamePrefix(@PathParam("id") Long id,@PathParam("nachname") String nachnamePrefix) {
 		final List<Nutzer> nutzer = ns.findNutzerByNachnamePrefix(id,nachnamePrefix);
 		
